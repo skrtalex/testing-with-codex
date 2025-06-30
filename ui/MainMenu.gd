@@ -17,11 +17,11 @@ func _ready() -> void:
 	print_debug("Debug: Reached _ready() in MainMenu.gd")
 	push_warning("If you see this, script is executing.")
 
-	main_screen_container = get_parent().get_node_or_null("MainScreenContainer")
-	if main_screen_container == null:
-		push_error("MainScreenContainer node not found!")
-	else:
-		print("MainScreenContainer found")
+    main_screen_container = get_parent()
+    if main_screen_container == null:
+            push_error("MainScreenContainer node not found!")
+    else:
+            print("MainScreenContainer found")
 
 	new_module_button.pressed.connect(_on_new_module)
 	load_module_button.pressed.connect(_on_load_module)

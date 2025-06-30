@@ -40,7 +40,7 @@ func _on_create():
         scene_file.close()
 
     print("Created module: " + module_name)
-    get_tree().change_scene_to_file("res://ui/MainMenu.tscn")
+    get_tree().change_scene_to_file("res://main/Main.tscn")
 
 func _on_back():
-    get_tree().change_scene_to_file("res://ui/MainMenu.tscn")
+    get_tree().change_scene_to_file("res://main/Main.tscn")
