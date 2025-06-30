@@ -9,9 +9,14 @@ const SETTINGS_PATH := "res://ui/Settings.tscn"
 @onready var load_module_button: Button = $VBoxContainer/LoadModuleButton
 @onready var view_modules_button: Button = $VBoxContainer/ViewAllModulesButton
 @onready var settings_button: Button = $VBoxContainer/SettingsButton
-@onready var main_screen_container: Control = get_parent().get_node("MainScreenContainer")
+
+var main_screen_container: Control
 
 func _ready() -> void:
+    main_screen_container = get_parent().get_node_or_null("MainScreenContainer")
+    if main_screen_container == null:
+        push_error("MainScreenContainer node not found!")
+    print("MainMenu is READY")
     new_module_button.pressed.connect(_on_new_module)
     load_module_button.pressed.connect(_on_load_module)
     view_modules_button.pressed.connect(_on_view_all_modules)
@@ -32,13 +37,17 @@ func _load_into_container(scene_path: String) -> void:
         instance.anchor_bottom = 1.0
 
 func _on_new_module() -> void:
+    print("New Module button pressed")
     _load_into_container(NEW_MODULE_PATH)
 
 func _on_load_module() -> void:
+    print("Load Module button pressed")
     _load_into_container(LOAD_MODULE_PATH)
 
 func _on_view_all_modules() -> void:
+    print("View All Modules button pressed")
     _load_into_container(VIEW_MODULES_PATH)
 
 func _on_settings() -> void:
+    print("Settings button pressed")
     _load_into_container(SETTINGS_PATH)
