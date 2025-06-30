@@ -3,6 +3,10 @@ extends Control
 @onready var list_container = $ScrollContainer/VBoxContainer
 
 func _ready():
+    $BackButton.pressed.connect(_on_back)
+    _populate()
+
+func _populate():
     var modules_dir = "res://modules"
     var dir = DirAccess.open(modules_dir)
     if dir:
@@ -29,3 +33,6 @@ func _ready():
                             list_container.add_child(label)
             entry = dir.get_next()
         dir.list_dir_end()
+
+func _on_back():
+    get_tree().change_scene_to_file("res://ui/MainMenu.tscn")
