@@ -5,4 +5,6 @@
 
 [node name="Main" type="Node" script=ExtResource(2)]
 
+[node name="MainScreenContainer" type="Control" parent="."]
+
 [node name="MainMenu" parent="." instance=ExtResource(1)]
