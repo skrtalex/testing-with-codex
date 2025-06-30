@@ -13,7 +13,7 @@ func _on_load_module():
     print("Load Module clicked")
 
 func _on_view_all_modules():
-    print("View All Modules clicked")
+    get_tree().change_scene_to_file("res://ui/ViewModules.tscn")
 
 func _on_settings():
     print("Settings clicked")
