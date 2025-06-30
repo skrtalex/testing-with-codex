@@ -37,4 +37,4 @@ func _on_load_button(module_dir):
     print("Load module: %s" % module_dir)
 
 func _on_back():
-    get_tree().change_scene_to_file("res://ui/MainMenu.tscn")
+    get_tree().change_scene_to_file("res://main/Main.tscn")
