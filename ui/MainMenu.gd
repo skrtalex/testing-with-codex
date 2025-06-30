@@ -1,25 +1,29 @@
 extends Control
 
-const NEW_MODULE_SCENE := preload("res://ui/NewModule.tscn")
-const LOAD_MODULE_SCENE := preload("res://ui/LoadModule.tscn")
-const VIEW_MODULES_SCENE := preload("res://ui/ViewModules.tscn")
-const SETTINGS_SCENE := preload("res://ui/Settings.tscn")
+const NEW_MODULE_PATH := "res://ui/NewModule.tscn"
+const LOAD_MODULE_PATH := "res://ui/LoadModule.tscn"
+const VIEW_MODULES_PATH := "res://ui/ViewModules.tscn"
+const SETTINGS_PATH := "res://ui/Settings.tscn"
 
+@onready var new_module_button: Button = $VBoxContainer/NewModuleButton
+@onready var load_module_button: Button = $VBoxContainer/LoadModuleButton
+@onready var view_modules_button: Button = $VBoxContainer/ViewAllModulesButton
+@onready var settings_button: Button = $VBoxContainer/SettingsButton
 @onready var main_screen_container: Control = get_parent().get_node("MainScreenContainer")
 
 func _ready() -> void:
-    $VBoxContainer/NewModuleButton.pressed.connect(_on_new_module)
-    $VBoxContainer/LoadModuleButton.pressed.connect(_on_load_module)
-    $VBoxContainer/ViewAllModulesButton.pressed.connect(_on_view_all_modules)
-    $VBoxContainer/SettingsButton.pressed.connect(_on_settings)
+    new_module_button.pressed.connect(_on_new_module)
+    load_module_button.pressed.connect(_on_load_module)
+    view_modules_button.pressed.connect(_on_view_all_modules)
+    settings_button.pressed.connect(_on_settings)
 
-func _clear_container() -> void:
-    for child in main_screen_container.get_children():
+func clear_children(node: Node) -> void:
+    for child in node.get_children():
         child.queue_free()
 
-func _load_into_container(scene: PackedScene) -> void:
-    _clear_container()
-    var instance = scene.instantiate()
+func _load_into_container(scene_path: String) -> void:
+    clear_children(main_screen_container)
+    var instance = load(scene_path).instantiate()
     main_screen_container.add_child(instance)
     if instance is Control:
         instance.anchor_left = 0.0
@@ -28,13 +32,13 @@ func _load_into_container(scene: PackedScene) -> void:
         instance.anchor_bottom = 1.0
 
 func _on_new_module() -> void:
-    _load_into_container(NEW_MODULE_SCENE)
+    _load_into_container(NEW_MODULE_PATH)
 
 func _on_load_module() -> void:
-    _load_into_container(LOAD_MODULE_SCENE)
+    _load_into_container(LOAD_MODULE_PATH)
 
 func _on_view_all_modules() -> void:
-    _load_into_container(VIEW_MODULES_SCENE)
+    _load_into_container(VIEW_MODULES_PATH)
 
 func _on_settings() -> void:
-    _load_into_container(SETTINGS_SCENE)
+    _load_into_container(SETTINGS_PATH)
