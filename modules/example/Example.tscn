@@ -1,3 +1,6 @@
-[gd_scene load_steps=1 format=3]
+[gd_scene load_steps=2 format=3]
 
-[node name="Example" type="Node"]
+[node name="Example" type="Node2D"]
+
+[node name="Label" type="Label" parent="Example"]
+text = "This is a test module"
