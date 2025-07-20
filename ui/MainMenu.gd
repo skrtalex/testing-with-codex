@@ -5,16 +5,25 @@ const LOAD_MODULE_PATH := "res://ui/LoadModule.tscn"
 const VIEW_MODULES_PATH := "res://ui/ViewModules.tscn"
 const SETTINGS_PATH := "res://ui/Settings.tscn"
 
-@onready var new_module_button: Button = $VBoxContainer/NewModuleButton
-@onready var load_module_button: Button = $VBoxContainer/LoadModuleButton
-@onready var view_modules_button: Button = $VBoxContainer/ViewAllModulesButton
-@onready var settings_button: Button = $VBoxContainer/SettingsButton
+var new_module_button: Button
+var load_module_button: Button
+var view_modules_button: Button
+var settings_button: Button
 
 var main_screen_container: Control
 
 func _ready() -> void:
     print("MainMenu is READY")
     print_debug("Debug: Reached _ready() in MainMenu.gd")
+
+    new_module_button = get_node_or_null("VBoxContainer/NewModuleButton")
+    load_module_button = get_node_or_null("VBoxContainer/LoadModuleButton")
+    view_modules_button = get_node_or_null("VBoxContainer/ViewAllModulesButton")
+    settings_button = get_node_or_null("VBoxContainer/SettingsButton")
+
+    if not new_module_button or not load_module_button or not view_modules_button or not settings_button:
+        push_error("One or more menu buttons missing from MainMenu.tscn")
+        return
 
     main_screen_container = get_node_or_null("..")
     if main_screen_container == null:
