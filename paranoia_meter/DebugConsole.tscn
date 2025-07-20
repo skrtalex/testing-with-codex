@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3]
+
+[node name="DebugConsole" type="CanvasLayer"]
+script = ExtResource( 1 )
+visible = false
+
+[node name="Panel" type="Panel" parent="."]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+
+[node name="Gunshot (+20)" type="Button" parent="Panel/VBoxContainer"]
+text = "Gunshot (+20)"
+
+[node name="Alone Too Long (+10)" type="Button" parent="Panel/VBoxContainer"]
+text = "Alone Too Long (+10)"
+
+[node name="Calming Pills (-20)" type="Button" parent="Panel/VBoxContainer"]
+text = "Calming Pills (-20)"
+
+[node name="Warm Tea (-10)" type="Button" parent="Panel/VBoxContainer"]
+text = "Warm Tea (-10)"
+
+[node name="Dark Forest" type="CheckBox" parent="Panel/VBoxContainer"]
+text = "Dark Forest"
+
+[node name="Lush Green" type="CheckBox" parent="Panel/VBoxContainer"]
+text = "Lush Green"
+
+[ext_resource path="res://paranoia_meter/DebugConsole.gd" type="Script" id=1]
