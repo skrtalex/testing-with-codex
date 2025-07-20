@@ -13,6 +13,9 @@ func _populate():
         dir.list_dir_begin()
         var entry = dir.get_next()
         while entry != "":
+            if entry == "." or entry == "..":
+                entry = dir.get_next()
+                continue
             if dir.current_is_dir():
                 var metadata_path = modules_dir + "/" + entry + "/metadata.json"
                 if FileAccess.file_exists(metadata_path):
