@@ -3,6 +3,8 @@ extends Control
 @onready var modules_list = $VBoxContainer/ModulesList
 
 func _ready():
+    print("LoadModule scene ready")
+    print_debug("Debug: Reached _ready() in LoadModule.gd")
     $VBoxContainer/BackButton.pressed.connect(_on_back)
     _populate_modules()
 
