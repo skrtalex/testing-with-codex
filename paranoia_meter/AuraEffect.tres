@@ -1,0 +1,23 @@
+[gd_resource type="ShaderMaterial" format=3]
+
+shader = SubResource( 1 )
+
+[sub_resource type="Shader" id=1]
+shader_type canvas_item;
+
+uniform float level : hint_range(0.0,1.0) = 0.0;
+
+void fragment() {
+    vec2 center = vec2(0.5);
+    float dist = distance(UV, center);
+    float halo = smoothstep(0.3, 0.8, dist);
+    float flicker = 0.0;
+    if (level > 0.75) {
+        flicker = (sin(UV.x * 40.0 + TIME * 10.0) + sin(UV.y * 30.0 + TIME * 8.0)) * 0.05;
+    }
+    vec4 low = vec4(0.8, 0.8, 0.8, 1.0);
+    vec4 high = vec4(0.2, 0.2, 0.2, 1.0);
+    vec4 aura_color = mix(low, high, level);
+    float intensity = clamp(level * halo + flicker, 0.0, 1.0);
+    COLOR = mix(vec4(0.0,0.0,0.0,0.0), aura_color, intensity);
+}
