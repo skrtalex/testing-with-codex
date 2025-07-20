@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3]
+shader = Shader.new()
+shader.code = """
+shader_type canvas_item;
+
+uniform float level = 0.0;
+
+void fragment() {
+    vec2 center = vec2(0.5);
+    float dist = distance(UV, center);
+    float aura = smoothstep(0.3, 0.5, dist);
+    vec3 base = mix(vec3(0.9), vec3(0.1), level);
+    float alpha = aura * level;
+    COLOR = vec4(base, alpha);
+}
+"""
