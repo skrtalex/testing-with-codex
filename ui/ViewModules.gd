@@ -3,6 +3,8 @@ extends Control
 @onready var list_container = $ScrollContainer/VBoxContainer
 
 func _ready():
+    print("ViewModules scene ready")
+    print_debug("Debug: Reached _ready() in ViewModules.gd")
     $BackButton.pressed.connect(_on_back)
     _populate()
 
