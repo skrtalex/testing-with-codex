@@ -12,6 +12,9 @@ func _populate_modules():
         dir.list_dir_begin()
         var entry = dir.get_next()
         while entry != "":
+            if entry == "." or entry == "..":
+                entry = dir.get_next()
+                continue
             if dir.current_is_dir():
                 var metadata_path = "res://modules/" + entry + "/metadata.json"
                 var module_name = entry
