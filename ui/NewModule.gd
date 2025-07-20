@@ -6,7 +6,9 @@ extends Control
 @onready var status_dropdown = $VBoxContainer/StatusDropdown
 
 func _ready():
-    print("NewModule _ready")
+    print("NewModule scene ready")
+    print_debug("Debug: Reached _ready() in NewModule.gd")
+
     $VBoxContainer/CreateButton.pressed.connect(_on_create)
     $VBoxContainer/BackButton.pressed.connect(_on_back)
     status_dropdown.add_item("In Work")
