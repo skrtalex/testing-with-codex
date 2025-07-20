@@ -1,0 +1,6 @@
+{
+  "name": "Paranoia Meter",
+  "description": "A paranoia simulation mechanic with visual aura and debug interface.",
+  "tags": ["paranoia", "aura", "shader", "module"],
+  "status": "In Work"
+}
