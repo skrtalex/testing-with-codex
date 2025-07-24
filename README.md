@@ -63,15 +63,25 @@ Placeholder for global settings like Godot path or UI themes.
 Folder Structure
 Game-Mechanics-Hub/
 ├── main.js (Electron main process)
+
 ├── package.json
+
 ├── public/
+
 │ ├── index.html (UI interface)
+
 │ ├── script.js (Frontend logic)
+
 │ └── style.css
+
 ├── modules/
+
 │ ├── ParanoiaNPC/
+
 │ │ ├── project.godot
+
 │ │ └── metadata.json
+
 │ └── ... other modules ...
 
 Technologies Used
