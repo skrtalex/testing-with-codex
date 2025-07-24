@@ -48,6 +48,8 @@ async function init() {
         stopBtn.classList.remove('hidden');
         stopBtn.addEventListener('click', stop);
 
+        levelBar.classList.add('active');
+
         logDebug('Noise meter started');
     } catch (err) {
         console.error('Microphone access denied or not available', err);
@@ -69,6 +71,7 @@ function stop() {
         mediaStream.getTracks().forEach(t => t.stop());
     }
     stopBtn.classList.add('hidden');
+    levelBar.classList.remove('active');
     logDebug('Noise meter stopped');
 }
 

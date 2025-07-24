@@ -60,57 +60,87 @@ function showModules() {
     moduleList.classList.remove('hidden');
     mainMenu.classList.add('hidden');
     modulesContainer.innerHTML = '';
+
+    const entries = [];
     const modulesPath = path.join(__dirname, '..', 'modules');
 
-    let folders = [];
     try {
-        folders = fs.readdirSync(modulesPath, { withFileTypes: true })
+        const folders = fs.readdirSync(modulesPath, { withFileTypes: true })
             .filter(dirent => dirent.isDirectory())
             .map(dirent => dirent.name);
+
+        folders.forEach(folder => {
+            const moduleDir = path.join(modulesPath, folder);
+            const projectFile = path.join(moduleDir, 'project.godot');
+            const metadataFile = path.join(moduleDir, 'metadata.json');
+
+            if (!fs.existsSync(projectFile) || !fs.existsSync(metadataFile)) {
+                return;
+            }
+
+            try {
+                const data = fs.readFileSync(metadataFile);
+                const metadata = JSON.parse(data);
+                entries.push({
+                    type: 'godot',
+                    name: folder,
+                    dir: moduleDir,
+                    metadata
+                });
+            } catch (err) {
+                logDebug(`Failed to read metadata for ${folder}`);
+            }
+        });
     } catch (err) {
         logDebug('No modules directory found.');
-        return;
     }
 
-    if (folders.length === 0) {
+    // Load HTML/Web modules from modules.json
+    const htmlModulesFile = path.join(__dirname, 'modules.json');
+    if (fs.existsSync(htmlModulesFile)) {
+        try {
+            const data = fs.readFileSync(htmlModulesFile);
+            const htmlModules = JSON.parse(data);
+            htmlModules.forEach(m => {
+                entries.push({ type: 'html', meta: m });
+            });
+        } catch (err) {
+            logDebug('Failed to read modules.json');
+        }
+    }
+
+    if (entries.length === 0) {
         modulesContainer.textContent = 'No modules found.';
         logDebug('No modules found.');
         return;
     }
 
-    folders.forEach(folder => {
-        const moduleDir = path.join(modulesPath, folder);
-        const projectFile = path.join(moduleDir, 'project.godot');
-        const metadataFile = path.join(moduleDir, 'metadata.json');
-
-        if (!fs.existsSync(projectFile) || !fs.existsSync(metadataFile)) {
-            return;
-        }
-
-        let metadata = {};
-        try {
-            const data = fs.readFileSync(metadataFile);
-            metadata = JSON.parse(data);
-        } catch (err) {
-            logDebug(`Failed to read metadata for ${folder}`);
-            return;
-        }
-
+    entries.forEach(entry => {
         const moduleDiv = document.createElement('div');
         moduleDiv.className = 'moduleEntry';
         const title = document.createElement('span');
-        title.textContent = metadata.name || folder;
+        if (entry.type === 'godot') {
+            title.textContent = entry.metadata.name || entry.name;
+        } else {
+            title.textContent = entry.meta.title || entry.meta.name;
+        }
         const launchBtn = document.createElement('button');
-        launchBtn.textContent = 'Launch';
+        launchBtn.textContent = entry.type === 'godot' ? 'Launch' : 'Open';
         launchBtn.addEventListener('click', () => {
-            logDebug(`Attempting to load module ${folder} using ${godotExecutable}...`);
-            const child = spawn(godotExecutable, ['--path', moduleDir]);
-            child.on('close', (code) => {
-                logDebug(`Module ${folder} exited with code ${code}`);
-            });
-            child.on('error', (err) => {
-                logDebug(`Failed to launch ${folder}: ${err}`);
-            });
+            if (entry.type === 'godot') {
+                logDebug(`Attempting to load module ${entry.name} using ${godotExecutable}...`);
+                const child = spawn(godotExecutable, ['--path', entry.dir]);
+                child.on('close', (code) => {
+                    logDebug(`Module ${entry.name} exited with code ${code}`);
+                });
+                child.on('error', (err) => {
+                    logDebug(`Failed to launch ${entry.name}: ${err}`);
+                });
+            } else {
+                const url = path.join(__dirname, entry.meta.path);
+                logDebug(`Opening HTML module ${entry.meta.name} at ${url}`);
+                window.open(url);
+            }
         });
 
         moduleDiv.appendChild(title);

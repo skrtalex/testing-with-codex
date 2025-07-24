@@ -5,11 +5,20 @@
     <title>Noise Meter Test</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
+        #backBtn { margin-bottom: 10px; }
+        .micWarning { color: red; font-size: 0.9em; }
         #levelBar {
             width: 0%;
             height: 20px;
             background: green;
             transition: width 0.1s linear;
+        }
+        #levelBar.active {
+            animation: pulse 0.5s linear infinite alternate;
+        }
+        @keyframes pulse {
+            from { opacity: 0.8; }
+            to { opacity: 1; }
         }
         #barContainer {
             width: 100%;
@@ -20,7 +29,9 @@
     </style>
 </head>
 <body>
+    <button onclick="history.back()" id="backBtn">&larr; Back</button>
     <h1>Noise Meter</h1>
+    <p class="micWarning">&#9888; Requires microphone access</p>
     <div id="barContainer"><div id="levelBar"></div></div>
     <p>Current level: <span id="levelNum">0</span></p>
     <button id="stopBtn" class="hidden">Stop</button>

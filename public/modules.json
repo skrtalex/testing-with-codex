@@ -1,0 +1,10 @@
+[
+  {
+    "name": "NoiseMeter",
+    "title": "Noise Meter",
+    "description": "Visualizes microphone noise levels in real time.",
+    "tags": ["test", "mic", "sound"],
+    "status": "In Work",
+    "path": "modules/NoiseMeter/noiseMeter.html"
+  }
+]
