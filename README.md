@@ -33,6 +33,20 @@ Godot runs the mechanic as a standalone game.
 
 When the Godot process exits, control returns to the Electron launcher.
 
+Setup
+To run the Electron launcher locally:
+
+1. Install dependencies:
+   ```
+   npm install
+   ```
+2. Start the app:
+   ```
+   npm start
+   ```
+
+This fetches all required packages and launches the development version of Game Mechanics Hub.
+
 Use Case
 The goal is to test ideas like:
 
