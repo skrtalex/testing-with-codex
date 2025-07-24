@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog } = require('electron');
 const path = require('path');
 
 function createWindow() {
@@ -12,6 +12,19 @@ function createWindow() {
     });
 
     win.loadFile(path.join(__dirname, 'public', 'index.html'));
+
+    win.on('close', (e) => {
+        const choice = dialog.showMessageBoxSync(win, {
+            type: 'question',
+            buttons: ['Cancel', 'Quit'],
+            defaultId: 1,
+            cancelId: 0,
+            message: 'Are you sure you want to quit?'
+        });
+        if (choice === 0) {
+            e.preventDefault();
+        }
+    });
 }
 
 app.whenReady().then(() => {

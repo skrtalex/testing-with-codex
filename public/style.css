@@ -18,6 +18,12 @@ button {
     margin: 5px;
     padding: 10px 15px;
 }
+.submenu {
+    padding: 20px;
+}
+.backBtn {
+    margin-bottom: 10px;
+}
 .hidden {
     display: none;
 }
