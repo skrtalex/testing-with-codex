@@ -60,6 +60,23 @@ Displays all modules in a bigger list, optionally with filters (by tag or status
 Settings
 Placeholder for global settings like Godot path or UI themes.
 
+## Configuring the Godot Path
+The launcher relies on the Godot executable to run each module. Set the `GODOT_PATH` environment variable to the full path of your Godot binary if it is not available on your system `PATH`.
+
+Example on Linux/macOS:
+
+```bash
+export GODOT_PATH=/path/to/Godot
+```
+
+On Windows (PowerShell):
+
+```powershell
+$env:GODOT_PATH = 'C:\\Path\\To\\Godot.exe'
+```
+
+If `GODOT_PATH` is not set, the app defaults to simply running `godot`.
+
 Folder Structure
 Game-Mechanics-Hub/
 ├── main.js (Electron main process)
