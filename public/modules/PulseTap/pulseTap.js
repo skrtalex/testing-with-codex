@@ -1,6 +1,7 @@
 const DEBUG = true;
 
 const pulseElem = document.getElementById('pulse');
+const progressElem = document.getElementById('progress');
 const resultElem = document.getElementById('result');
 const restartBtn = document.getElementById('restartBtn');
 const backBtn = document.getElementById('backBtn');
@@ -23,7 +24,14 @@ function logDebug(msg) {
 function pulse() {
     lastBeat = performance.now();
     pulseElem.classList.add('active');
-    setTimeout(() => pulseElem.classList.remove('active'), 150);
+    // reset progress bar
+    progressElem.style.transition = 'none';
+    progressElem.style.width = '0%';
+    setTimeout(() => {
+        pulseElem.classList.remove('active');
+        progressElem.style.transition = `width ${beatLength}ms linear`;
+        progressElem.style.width = '100%';
+    }, 20);
 }
 
 function startGame() {
@@ -35,6 +43,9 @@ function startGame() {
     resultElem.textContent = 'Press Space in time with the pulse';
     restartBtn.classList.add('hidden');
     clearInterval(intervalId);
+    // start progress bar animation
+    progressElem.style.transition = `width ${beatLength}ms linear`;
+    progressElem.style.width = '100%';
     pulse();
     intervalId = setInterval(pulse, beatLength);
 }
