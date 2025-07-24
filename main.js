@@ -1,4 +1,6 @@
+
 const { app, BrowserWindow, ipcMain } = require('electron');
+
 const path = require('path');
 
 function createWindow() {
@@ -21,9 +23,11 @@ app.whenReady().then(() => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow();
     });
 
+
     ipcMain.on('quit-app', () => {
         app.quit();
     });
+
 });
 
 app.on('window-all-closed', function () {

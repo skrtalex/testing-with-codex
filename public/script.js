@@ -1,7 +1,9 @@
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+
 const { ipcRenderer } = require('electron');
+
 
 const newModuleBtn = document.getElementById('newModuleBtn');
 const loadModuleBtn = document.getElementById('loadModuleBtn');
@@ -12,6 +14,7 @@ const debugPanel = document.getElementById('debugPanel');
 const debugOutput = document.getElementById('debugOutput');
 const moduleList = document.getElementById('moduleList');
 const modulesContainer = document.getElementById('modulesContainer');
+
 const mainMenu = document.getElementById('mainMenu');
 const newModuleSection = document.getElementById('newModuleSection');
 const settingsSection = document.getElementById('settingsSection');
@@ -20,6 +23,7 @@ const quitConfirm = document.getElementById('quitConfirm');
 const quitYesBtn = document.getElementById('quitYes');
 const quitNoBtn = document.getElementById('quitNo');
 const backButtons = document.querySelectorAll('.backBtn');
+
 
 function logDebug(message) {
     const time = new Date().toLocaleTimeString();
@@ -32,6 +36,7 @@ function toggleDebug() {
     debugPanel.classList.toggle('hidden');
 }
 
+
 toggleDebugBtn.addEventListener('click', toggleDebug);
 
 backButtons.forEach(btn => {
@@ -39,18 +44,23 @@ backButtons.forEach(btn => {
         logDebug('Back button clicked');
         showMainMenu();
     });
+
 });
 
 newModuleBtn.addEventListener('click', () => {
     logDebug('New Module button clicked');
+
     hideAll();
     newModuleSection.classList.remove('hidden');
+
 });
 
 settingsBtn.addEventListener('click', () => {
     logDebug('Settings button opened');
+
     hideAll();
     settingsSection.classList.remove('hidden');
+
 });
 
 viewModulesBtn.addEventListener('click', () => {
@@ -62,6 +72,7 @@ loadModuleBtn.addEventListener('click', () => {
     logDebug('Load Module button clicked');
     showModules();
 });
+
 
 quitBtn.addEventListener('click', () => {
     logDebug('Quit button clicked');
