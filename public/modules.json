@@ -15,4 +15,12 @@
     "status": "In Work",
     "path": "modules/VoiceLock/voiceLock.html"
   }
+  ,{
+    "name": "PulseTap",
+    "title": "Pulse Tap",
+    "description": "Tap the spacebar in time with the visual pulse.",
+    "tags": ["rhythm", "input"],
+    "status": "In Work",
+    "path": "modules/PulseTap/pulseTap.html"
+  }
 ]
