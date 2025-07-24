@@ -13,6 +13,38 @@ header {
 }
 main {
     padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 25vh;
+    width: 200px;
+}
+
+.submenu {
+    padding: 20px;
+    margin-left: 30%;
+    width: 60%;
+}
+
+.moduleEntry {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.backBtn {
+    margin-bottom: 15px;
+}
+
+#quitConfirm {
+    position: absolute;
+    top: 40%;
+    left: 40%;
+    background: #fff;
+    border: 1px solid #333;
+    padding: 20px;
+
 }
 button {
     margin: 5px;

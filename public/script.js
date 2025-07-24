@@ -2,6 +2,9 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+const { ipcRenderer } = require('electron');
+
+
 const newModuleBtn = document.getElementById('newModuleBtn');
 const loadModuleBtn = document.getElementById('loadModuleBtn');
 const viewModulesBtn = document.getElementById('viewModulesBtn');
@@ -11,6 +14,16 @@ const debugPanel = document.getElementById('debugPanel');
 const debugOutput = document.getElementById('debugOutput');
 const moduleList = document.getElementById('moduleList');
 const modulesContainer = document.getElementById('modulesContainer');
+
+const mainMenu = document.getElementById('mainMenu');
+const newModuleSection = document.getElementById('newModuleSection');
+const settingsSection = document.getElementById('settingsSection');
+const quitBtn = document.getElementById('quitBtn');
+const quitConfirm = document.getElementById('quitConfirm');
+const quitYesBtn = document.getElementById('quitYes');
+const quitNoBtn = document.getElementById('quitNo');
+const backButtons = document.querySelectorAll('.backBtn');
+
 
 function logDebug(message) {
     const time = new Date().toLocaleTimeString();
@@ -23,16 +36,31 @@ function toggleDebug() {
     debugPanel.classList.toggle('hidden');
 }
 
-toggleDebugBtn.addEventListener('click', () => {
-    toggleDebug();
+
+toggleDebugBtn.addEventListener('click', toggleDebug);
+
+backButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        logDebug('Back button clicked');
+        showMainMenu();
+    });
+
 });
 
 newModuleBtn.addEventListener('click', () => {
     logDebug('New Module button clicked');
+
+    hideAll();
+    newModuleSection.classList.remove('hidden');
+
 });
 
 settingsBtn.addEventListener('click', () => {
     logDebug('Settings button opened');
+
+    hideAll();
+    settingsSection.classList.remove('hidden');
+
 });
 
 viewModulesBtn.addEventListener('click', () => {
@@ -45,7 +73,39 @@ loadModuleBtn.addEventListener('click', () => {
     showModules();
 });
 
+
+quitBtn.addEventListener('click', () => {
+    logDebug('Quit button clicked');
+    mainMenu.classList.add('hidden');
+    quitConfirm.classList.remove('hidden');
+});
+
+quitYesBtn.addEventListener('click', () => {
+    logDebug('Quit confirmed');
+    ipcRenderer.send('quit-app');
+});
+
+quitNoBtn.addEventListener('click', () => {
+    logDebug('Quit canceled');
+    quitConfirm.classList.add('hidden');
+    mainMenu.classList.remove('hidden');
+});
+
+function showMainMenu() {
+    hideAll();
+    mainMenu.classList.remove('hidden');
+}
+
+function hideAll() {
+    mainMenu.classList.add('hidden');
+    moduleList.classList.add('hidden');
+    newModuleSection.classList.add('hidden');
+    settingsSection.classList.add('hidden');
+    quitConfirm.classList.add('hidden');
+}
+
 function showModules() {
+    hideAll();
     moduleList.classList.remove('hidden');
     modulesContainer.innerHTML = '';
     const modulesPath = path.join(__dirname, '..', 'modules');
