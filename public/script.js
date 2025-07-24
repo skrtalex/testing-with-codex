@@ -2,6 +2,9 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// Allow custom Godot path via environment variable
+const godotExecutable = process.env.GODOT_PATH || 'godot';
+
 const newModuleBtn = document.getElementById('newModuleBtn');
 const loadModuleBtn = document.getElementById('loadModuleBtn');
 const viewModulesBtn = document.getElementById('viewModulesBtn');
@@ -91,8 +94,8 @@ function showModules() {
         const launchBtn = document.createElement('button');
         launchBtn.textContent = 'Launch';
         launchBtn.addEventListener('click', () => {
-            logDebug(`Attempting to load module ${folder}...`);
-            const child = spawn('godot', ['--path', moduleDir]);
+            logDebug(`Attempting to load module ${folder} using ${godotExecutable}...`);
+            const child = spawn(godotExecutable, ['--path', moduleDir]);
             child.on('close', (code) => {
                 logDebug(`Module ${folder} exited with code ${code}`);
             });
