@@ -7,4 +7,12 @@
     "status": "In Work",
     "path": "modules/NoiseMeter/noiseMeter.html"
   }
+  ,{
+    "name": "VoiceLock",
+    "title": "Voice Lock",
+    "description": "Hold your voice level within the safe range to unlock.",
+    "tags": ["mic", "sound", "puzzle"],
+    "status": "In Work",
+    "path": "modules/VoiceLock/voiceLock.html"
+  }
 ]
