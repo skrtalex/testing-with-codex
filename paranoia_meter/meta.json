@@ -1,6 +1,0 @@
-{
-  "name": "Paranoia Meter",
-  "description": "Tracks player paranoia and changes screen visuals based on triggers.",
-  "tags": ["paranoia", "aura", "shader", "debug"],
-  "status": "In Work"
-}
