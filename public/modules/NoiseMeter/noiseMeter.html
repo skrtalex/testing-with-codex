@@ -8,8 +8,11 @@
         #backBtn { margin-bottom: 10px; }
         .micWarning { color: red; font-size: 0.9em; }
         #levelBar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
             width: 0%;
-            height: 20px;
             background: green;
             transition: width 0.1s linear;
         }
@@ -21,19 +24,38 @@
             to { opacity: 1; }
         }
         #barContainer {
+            position: relative;
             width: 100%;
             height: 20px;
             background: #ccc;
             margin-top: 20px;
         }
+        #targetLine {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: red;
+            left: 0;
+        }
+        #voiceLock p { margin: 5px 0; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <button onclick="history.back()" id="backBtn">&larr; Back</button>
+    <button id="backBtn">&larr; Back</button>
     <h1>Noise Meter</h1>
     <p class="micWarning">&#9888; Requires microphone access</p>
-    <div id="barContainer"><div id="levelBar"></div></div>
+    <div id="barContainer">
+        <div id="levelBar"></div>
+        <div id="targetLine"></div>
+    </div>
     <p>Current level: <span id="levelNum">0</span></p>
+    <section id="voiceLock">
+        <p id="targetInfo"></p>
+        <p id="timerInfo"></p>
+        <p id="unlockMsg" class="hidden">&#10004; Unlocked!</p>
+    </section>
     <button id="stopBtn" class="hidden">Stop</button>
     <script src="noiseMeter.js"></script>
 </body>
