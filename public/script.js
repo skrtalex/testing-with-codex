@@ -14,10 +14,12 @@ const debugPanel = document.getElementById('debugPanel');
 const debugOutput = document.getElementById('debugOutput');
 const moduleList = document.getElementById('moduleList');
 const modulesContainer = document.getElementById('modulesContainer');
+const mainMenu = document.getElementById('mainMenu');
+const backBtn = document.getElementById('backBtn');
 
 function logDebug(message) {
     const time = new Date().toLocaleTimeString();
-    debugOutput.textContent += `[${time}] ${message}\n`;
+    debugOutput.textContent += `[${time}] [DEBUG] ${message}\n`;
     debugOutput.scrollTop = debugOutput.scrollHeight;
     console.log(message);
 }
@@ -48,8 +50,15 @@ loadModuleBtn.addEventListener('click', () => {
     showModules();
 });
 
+backBtn.addEventListener('click', () => {
+    logDebug('Back to main menu');
+    moduleList.classList.add('hidden');
+    mainMenu.classList.remove('hidden');
+});
+
 function showModules() {
     moduleList.classList.remove('hidden');
+    mainMenu.classList.add('hidden');
     modulesContainer.innerHTML = '';
     const modulesPath = path.join(__dirname, '..', 'modules');
 
