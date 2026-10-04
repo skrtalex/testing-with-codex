@@ -1,0 +1,296 @@
+{
+  "apple_green": {
+    "display_name": "Green Apple",
+    "icon": "res://assets/items/food/fruits/apple_green.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "apple_red": {
+    "display_name": "Red Apple",
+    "icon": "res://assets/items/food/fruits/apple_red.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "apple_yellow": {
+    "display_name": "Yellow Apple",
+    "icon": "res://assets/items/food/fruits/apple_yellow.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "apricot_orange": {
+    "display_name": "Orange Apricot",
+    "icon": "res://assets/items/food/fruits/apricot_orange.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "apricot_red": {
+    "display_name": "Red Apricot",
+    "icon": "res://assets/items/food/fruits/apricot_red.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "avocado1": {
+    "display_name": "Avocado Half",
+    "icon": "res://assets/items/food/fruits/avocado1.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "avocado2": {
+    "display_name": "Avocado Half (Light)",
+    "icon": "res://assets/items/food/fruits/avocado2.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "avocado3": {
+    "display_name": "Avocado",
+    "icon": "res://assets/items/food/fruits/avocado3.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "banana": {
+    "display_name": "Banana",
+    "icon": "res://assets/items/food/fruits/banana.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "blackberry": {
+    "display_name": "Blackberry",
+    "icon": "res://assets/items/food/fruits/blackberry.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "cherry": {
+    "display_name": "Cherry",
+    "icon": "res://assets/items/food/fruits/cherry.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "coconut": {
+    "display_name": "Coconut",
+    "icon": "res://assets/items/food/fruits/coconut.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "coconut2": {
+    "display_name": "Coconut Half",
+    "icon": "res://assets/items/food/fruits/coconut2.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "damson_plum": {
+    "display_name": "Damson Plum",
+    "icon": "res://assets/items/food/fruits/damson_plum.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "dragonfruit": {
+    "display_name": "Dragon Fruit",
+    "icon": "res://assets/items/food/fruits/dragonfruit.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "goldenberry": {
+    "display_name": "Goldenberry",
+    "icon": "res://assets/items/food/fruits/goldenberry.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "goldenberry2": {
+    "display_name": "Goldenberry (Husk)",
+    "icon": "res://assets/items/food/fruits/goldenberry2.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "grapefruit": {
+    "display_name": "Grapefruit Slice",
+    "icon": "res://assets/items/food/fruits/grapefruit.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "grapegreen": {
+    "display_name": "Green Grapes",
+    "icon": "res://assets/items/food/fruits/grapegreen.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "grapepurple": {
+    "display_name": "Purple Grapes",
+    "icon": "res://assets/items/food/fruits/grapepurple.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "grapered": {
+    "display_name": "Red Grapes",
+    "icon": "res://assets/items/food/fruits/grapered.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "kiwi": {
+    "display_name": "Kiwi Slice",
+    "icon": "res://assets/items/food/fruits/kiwi.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "kiwi2": {
+    "display_name": "Kiwi",
+    "icon": "res://assets/items/food/fruits/kiwi2.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "lemon1": {
+    "display_name": "Lemon",
+    "icon": "res://assets/items/food/fruits/lemon1.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "lemon2": {
+    "display_name": "Lemon (Upright)",
+    "icon": "res://assets/items/food/fruits/lemon2.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "lemon3": {
+    "display_name": "Lemon Slice",
+    "icon": "res://assets/items/food/fruits/lemon3.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "melon1": {
+    "display_name": "Melon",
+    "icon": "res://assets/items/food/fruits/melon1.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "melon2": {
+    "display_name": "Melon Half",
+    "icon": "res://assets/items/food/fruits/melon2.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "orange_slice": {
+    "display_name": "Orange Slice",
+    "icon": "res://assets/items/food/fruits/orange_slice.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "orange": {
+    "display_name": "Orange",
+    "icon": "res://assets/items/food/fruits/orange.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "papaya": {
+    "display_name": "Papaya Half",
+    "icon": "res://assets/items/food/fruits/papaya.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "peach": {
+    "display_name": "Peach Half",
+    "icon": "res://assets/items/food/fruits/peach.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "pear": {
+    "display_name": "Pear",
+    "icon": "res://assets/items/food/fruits/pear.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "pear_green": {
+    "display_name": "Green Pear",
+    "icon": "res://assets/items/food/fruits/pear_green.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "pineapple": {
+    "display_name": "Pineapple",
+    "icon": "res://assets/items/food/fruits/pineapple.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "pomegranate1": {
+    "display_name": "Pomegranate",
+    "icon": "res://assets/items/food/fruits/pomegranate1.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "pomegranate2": {
+    "display_name": "Pomegranate Half",
+    "icon": "res://assets/items/food/fruits/pomegranate2.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "raspberry1": {
+    "display_name": "Red Raspberry",
+    "icon": "res://assets/items/food/fruits/raspberry1.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "raspberry2": {
+    "display_name": "Purple Raspberry",
+    "icon": "res://assets/items/food/fruits/raspberry2.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "strawberry": {
+    "display_name": "Strawberry",
+    "icon": "res://assets/items/food/fruits/strawberry.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "watermelon1": {
+    "display_name": "Watermelon Slice",
+    "icon": "res://assets/items/food/fruits/watermelon1.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  },
+  "watermelon2": {
+    "display_name": "Watermelon Slice (Dark)",
+    "icon": "res://assets/items/food/fruits/watermelon2.png",
+    "max_stack": 20,
+    "category": "food",
+    "type": "fruit"
+  }
+}

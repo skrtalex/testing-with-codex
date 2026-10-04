@@ -1,9 +1,15 @@
-# Stardew-ish Project — Living GDD
+# Stardew-ish Project â€” Living GDD
 
-**Current prototype version:** v0.0.0.5  
+**Current prototype version:** v0.0.0.6
 **Engine:** Godot 4.x  
 **Scripting:** GDScript  
-**Current phase:** movement / feel / presentation prototype
+**Current phase:** movement / interaction / item-inventory prototype
+
+## v0.0.0.6 update
+
+The prototype now includes generic E interaction, shaking fruit trees, scattered world pickups, a configurable player inventory (16 slots by default), and a fixed 32-slot test chest. I opens player inventory; click stacks to transfer when the chest is open. Item data and drop settings are documented in README.md. Inventory and chest contents persist only during the current run.
+
+The v0.0.0.5 design history below remains useful for movement and presentation. Interaction and basic inventory are now implemented; larger systems remain out of scope.
 
 ## 1. High-level concept
 
@@ -35,6 +41,9 @@ The project is deliberately being built from a small movement sandbox outward. T
 | Dash | Left Alt |
 | Infinite stamina debug toggle | F1 |
 | Change prototype skin | F2 |
+| Interact / close chest | E |
+| Player inventory | I |
+| Close inventory | Esc |
 
 Movement is 8-directional.
 
@@ -168,22 +177,22 @@ Important current config areas:
 
 ```text
 player
-├── base_stats
-├── movement
-├── stamina
-├── modifiers
-└── visuals
+â”œâ”€â”€ base_stats
+â”œâ”€â”€ movement
+â”œâ”€â”€ stamina
+â”œâ”€â”€ modifiers
+â””â”€â”€ visuals
 
 terrain
-├── normal
-├── bush
-└── rocks
+â”œâ”€â”€ normal
+â”œâ”€â”€ bush
+â””â”€â”€ rocks
 
 debug
 
 progression
-└── skills
-    └── athletics
+â””â”€â”€ skills
+    â””â”€â”€ athletics
 ```
 
 The `modifiers` and `progression.skills.athletics` sections are intentionally only placeholders.
@@ -270,12 +279,12 @@ Recommended order after verifying v0.0.0.5:
    - likely an interact action near/facing an object
    - signs, boxes, doors, NPC placeholders, etc.
 
-Only after movement + interaction feel stable should the project expand into inventory, tools, farming, NPCs, quests, time, save data, or progression.
+The basic inventory/chest slice is implemented in v0.0.0.6. Further expansion into tools, farming, NPCs, quests, time, save data, or progression remains deferred until the current flow feels stable.
 
 ## 14. Explicitly out of scope right now
 
 - Full farming system
-- Inventory system
+- Equipment, hotbars, weight, rarity, and expanded inventory features
 - Tool system
 - NPC schedules
 - Dialogue tree system

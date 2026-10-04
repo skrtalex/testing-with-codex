@@ -1,5 +1,5 @@
 {
-  "balance_version": "0.0.0.5",
+  "balance_version": "0.0.0.6",
   "player": {
     "base_stats": {
       "max_stamina": 100.0
@@ -51,5 +51,37 @@
         "enabled": false
       }
     }
+  },
+  "inventory": {
+    "player_slots": 16
+  },
+  "interaction": {
+    "reach": 52.0,
+    "half_width": 24.0
+  },
+  "pickups": {
+    "radius": 19.0,
+    "grace_seconds": 0.7
+  },
+  "tree_drops": {
+    "fruit_ids": [
+      "apple_red",
+      "apple_green",
+      "apricot_orange",
+      "orange",
+      "pear",
+      "pear_green",
+      "damson_plum",
+      "coconut",
+      "lemon1",
+      "pomegranate1",
+      "cherry"
+    ],
+    "min_drop": 1,
+    "max_drop": 3,
+    "cooldown_seconds": 3.0,
+    "scatter_radius": 22.0,
+    "shake_seconds": 0.32,
+    "shake_pixels": 4.0
   }
 }
