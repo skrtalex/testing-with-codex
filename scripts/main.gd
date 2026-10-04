@@ -1,7 +1,12 @@
 extends Node2D
 
 const MAP_SIZE := Vector2(960.0, 600.0)
-const BUSH_TEXTURE := preload("res://assets/terrain/bush_tile.png")
+const BUSH_TEXTURES := [
+    preload("res://assets/terrain/plant_bush_NE.png"),
+    preload("res://assets/terrain/plant_bush_NW.png"),
+    preload("res://assets/terrain/plant_bush_SE.png"),
+    preload("res://assets/terrain/plant_bush_SW.png"),
+]
 const ROCK_TEXTURE := preload("res://assets/terrain/rock_tile.png")
 
 const HUD_MARGIN := 18.0
@@ -13,6 +18,8 @@ var inventory: ItemInventory
 var inventory_ui: InventoryUI
 var interaction_detector: InteractionDetector
 var fruit_tree_count := 0
+var bush_count := 0
+var active_chest: TestChest
 var config: Dictionary = {}
 var terrain_config: Dictionary = {}
 
@@ -49,7 +56,8 @@ func _ready() -> void:
     player.add_child(interaction_detector)
     inventory_ui.open_changed.connect(_on_inventory_open_changed)
     _build_test_area()
-    _add_chest()
+    _add_chest("TestChest", Vector2(570, 350), false)
+    _add_chest("LargeChest", Vector2(450, 365), true)
     _connect_player_signals()
 
     controls_text.text = "WASD Walk | Shift Run | Left Alt Dash | F1 Infinite stamina | F2 Skin\nE Interact | I Inventory | Walk over fruit to collect | Esc Close"
@@ -163,13 +171,17 @@ func _build_test_area() -> void:
     _add_solid_rect(Rect2(475, 186, 85, 24), "Wall")
 
     # Slow terrain strips.
-    _add_terrain_rect(Rect2(90, 275, 250, 95), "bush")
+    # Individual bushes leave clear gaps; only their base footprints slow movement.
+    for bush_pos in [Vector2(112, 309), Vector2(170, 332), Vector2(231, 303), Vector2(302, 343)]:
+        _add_bush(bush_pos)
     _add_terrain_rect(Rect2(620, 275, 250, 95), "rocks")
 
     # Bottom obstacle course: mix of solids and slow terrain.
-    _add_terrain_rect(Rect2(80, 445, 135, 60), "bush")
+    for bush_pos in [Vector2(98, 473), Vector2(158, 493), Vector2(203, 465)]:
+        _add_bush(bush_pos)
     _add_terrain_rect(Rect2(420, 475, 150, 55), "rocks")
-    _add_terrain_rect(Rect2(720, 430, 140, 60), "bush")
+    for bush_pos in [Vector2(740, 450), Vector2(811, 467), Vector2(850, 441)]:
+        _add_bush(bush_pos)
 
     _add_tree(Vector2(275, 472))
     _add_tree(Vector2(315, 520))
@@ -180,7 +192,7 @@ func _build_test_area() -> void:
     _add_solid_rect(Rect2(810, 520, 95, 20), "Wall")
 
     # A decorative bush remains inside the mixed obstacle course.
-    _add_bush(Vector2(780, 470), Vector2(26.0, 18.0))
+    _add_bush(Vector2(780, 495))
 
 func _set_y_sort(node: Node2D, sort_y: float) -> void:
     node.set_meta("sort_y", sort_y)
@@ -199,16 +211,31 @@ func _process(_delta: float) -> void:
 func _on_inventory_open_changed(open: bool) -> void:
     player.inventory_open = open
     interaction_detector.blocked = open
+    if not open and is_instance_valid(active_chest):
+        active_chest.set_open(false)
+        active_chest = null
 
-func _add_chest() -> void:
+func _add_chest(node_name: String, chest_position: Vector2, large: bool) -> void:
     var chest := TestChest.new()
-    chest.name = "TestChest"
-    chest.position = Vector2(570, 350)
-    chest.inventory = ItemInventory.new(catalog, TestChest.SLOT_COUNT)
+    chest.name = node_name
+    chest.position = chest_position
+    var slots := TestChest.SLOT_COUNT * (2 if large else 1)
+    chest.inventory = ItemInventory.new(catalog, slots)
+    if large:
+        chest.closed_texture = preload("res://assets/items/placeable_items/box-large.png")
+        chest.open_texture = preload("res://assets/items/placeable_items/box-large-open.png")
+        chest.display_scale = 1.3
+        chest.collision_size = Vector2(38, 20)
     for id in ["apple_red", "orange", "pear", "cherry", "peach", "strawberry"]:
         chest.inventory.add_items(id, 8)
-    chest.opened.connect(inventory_ui.open_chest)
+    chest.opened.connect(_open_chest.bind(chest))
     add_child(chest)
+
+func _open_chest(inventory_data: ItemInventory, chest: TestChest) -> void:
+    if is_instance_valid(active_chest) and active_chest != chest:
+        active_chest.set_open(false)
+    active_chest = chest
+    inventory_ui.open_chest(inventory_data)
 
 func _spawn_pickup(id: String, quantity: int, local_position: Vector2) -> void:
     var pickup := WorldPickup.new()
@@ -348,23 +375,14 @@ func _add_canopy_blob(parent: Node, offset: Vector2, radius: float, color: Color
     blob.color = color
     parent.add_child(blob)
 
-func _add_bush(pos: Vector2, size: Vector2) -> void:
-    var node := Node2D.new()
-    node.position = pos
-    _set_y_sort(node, pos.y)
-
-    var shadow := Polygon2D.new()
-    shadow.polygon = _ellipse_polygon(size.x * 0.85, size.y * 0.38, 20)
-    shadow.position = Vector2(4.0, size.y * 0.75)
-    shadow.color = Color(0, 0, 0, 0.14)
-    shadow.z_index = -2
-    node.add_child(shadow)
-
-    _add_canopy_blob(node, Vector2(-size.x * 0.32, 0.0), size.y * 0.9, Color("387f45"))
-    _add_canopy_blob(node, Vector2(size.x * 0.28, -2.0), size.y * 0.88, Color("2e6f3d"))
-    _add_canopy_blob(node, Vector2(0.0, -size.y * 0.35), size.y * 0.95, Color("4d9d5f"))
-
-    add_child(node)
+func _add_bush(pos: Vector2) -> void:
+    var bush := SlowBush.new()
+    bush.name = "SlowBush%d" % bush_count
+    bush.position = pos
+    bush.bush_texture = BUSH_TEXTURES[bush_count % BUSH_TEXTURES.size()]
+    bush.settings = terrain_config.get("bush", {})
+    bush_count += 1
+    add_child(bush)
 
 func _add_terrain_rect(rect: Rect2, terrain_name: String) -> void:
     var area := Area2D.new()
@@ -409,14 +427,8 @@ func _add_terrain_rect(rect: Rect2, terrain_name: String) -> void:
 
     add_child(area)
 
-func _get_terrain_texture(terrain_name: String) -> Texture2D:
-    match terrain_name:
-        "bush":
-            return BUSH_TEXTURE
-        "rocks":
-            return ROCK_TEXTURE
-        _:
-            return BUSH_TEXTURE
+func _get_terrain_texture(_terrain_name: String) -> Texture2D:
+    return ROCK_TEXTURE
 
 func _circle_polygon(radius: float, points: int) -> PackedVector2Array:
     var polygon := PackedVector2Array()

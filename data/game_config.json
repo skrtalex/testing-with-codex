@@ -34,7 +34,11 @@
       "movement_multiplier": 1.0
     },
     "bush": {
-      "movement_multiplier": 0.75
+      "movement_multiplier": 0.75,
+      "display_width": 34,
+      "slow_half_width": 17,
+      "slow_half_height": 10,
+      "slow_offset_y": -4
     },
     "rocks": {
       "movement_multiplier": 0.55

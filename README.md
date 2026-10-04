@@ -8,7 +8,7 @@ A tiny Godot 4.x prototype focused on movement feel, stamina, terrain, 3/4 prese
 - Trees shake and scatter 1–3 fruit by default, with a 3-second cooldown. Each tree keeps its assigned fruit for the run.
 - Walk over drops to collect them. Pickups wait briefly after spawning, and full inventories leave excess fruit in the world.
 - Press **I** for the 16-slot player inventory. Drag a stack onto a slot, or click a stack then a destination, to move, merge, or swap it.
-- The test chest near the starting position has exactly **32 slots**, prefilled with six fruit stacks. Press E to open both inventories; double-click a stack to transfer as much as the destination accepts. Dragging or click-then-place allows precise placement, merging, and swapping within either inventory or between them.
+- The small test chest right of the starting position has **32 slots**; the large chest on the left has **64 slots**. Each is prefilled with six fruit stacks. Press E to open both inventories; double-click a stack to transfer as much as the destination accepts. Dragging or click-then-place allows precise placement, merging, and swapping within either inventory or between them.
 - **I / Esc** closes the inventory; **E** also closes the chest. Movement and pickup pause while a panel is open. Chest contents persist during the run; no save system is added.
 
 ## Included
@@ -116,7 +116,7 @@ The current defaults are:
 - `FruitTree` receives an assigned item ID and a drop definition from configuration. Assignment happens once at startup, cycling through `tree_drops.fruit_ids`. Each interaction randomizes quantity and scatter, with configurable cooldown/shake timing. Only the canopy shakes; trunk collision stays fixed.
 - `InventoryUI` builds screen-space grids, scales to fit the window, and displays icons, counts, empty slots, and capacity feedback.
 
-Tune player capacity in `inventory.player_slots`, interaction range in `interaction`, drop settings in `tree_drops`, and pickup range/delay in `pickups`, all in `data/game_config.json`. Chest capacity is fixed at 32 by this prototype's requirements.
+Tune player capacity in `inventory.player_slots`, interaction range in `interaction`, drop settings in `tree_drops`, and pickup range/delay in `pickups`, all in `data/game_config.json`. Chest capacities are 32 and 64 slots; each chest owns a separate inventory.
 
 ## Fruit assets
 
@@ -154,3 +154,11 @@ Human playtest checklist: walk/run/dash to every tree, face it and press E, insp
 InventorySlot handles native Godot drag previews, targeted drops, click selection, and double-click transfers. Slot controls remain in place during inventory updates so pointer gestures survive refreshes. ItemInventory.move_to_slot updates both inventories atomically before emitting change signals. Full matching stacks reject drops; drag data is checked against the current source stack to reject stale drags.
 
 Rendered tests exercise double-click transfer both ways, dragging within the chest and player inventory, cross-inventory swaps, partial/full merges, outside cancellation, closing mid-drag, and small-window controls.
+
+## Chest and bush graphics
+
+Small chest: `box.png` when closed, `box-open.png` while its transfer UI is open. Large chest: `box-large.png` / `box-large-open.png`. Closing with I, E, Esc, or the Close button restores the closed sprite. Both have footprint collision and preserve independent contents during the run. The large chest's 64-slot grid scrolls vertically so slots stay readable on small windows; drag/drop, click-to-place, and double-click transfers work in both chests.
+
+Eleven individual walkable bushes replace the old bush-tile strips and procedural decorative bush. They cycle through all four `plant_bush_NE/NW/SE/SW.png` textures, with transparent export padding excluded using Sprite2D texture regions. The PNGs remain unchanged. Slowing applies only in each bush's small elliptical footprint near its base; gaps between bushes are normal terrain. Rock strips remain unchanged.
+
+Tune `terrain.bush.display_width`, `slow_half_width`, `slow_half_height`, `slow_offset_y`, and `movement_multiplier` in `data/game_config.json`. `SlowBush` uses the existing terrain detector/overlap system, preserving slowest-overlap behavior and Y sorting from each bush's ground position. `bush_tile.png` remains in the repository as an unused asset; runtime code no longer loads it.

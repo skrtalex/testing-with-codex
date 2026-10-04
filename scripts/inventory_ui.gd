@@ -93,7 +93,7 @@ func _build_content() -> void:
     content.add_child(hint)
     _add_grid("Player (%d slots)" % player_inventory.size(), player_inventory)
     if chest_inventory != null:
-        _add_grid("Chest (32 slots)", chest_inventory)
+        _add_grid("Chest (%d slots)" % chest_inventory.size(), chest_inventory)
     status = Label.new()
     status.text = "Items remain in their original inventory when the destination is full."
     status.add_theme_font_size_override("font_size", 12)
@@ -110,7 +110,16 @@ func _add_grid(title_text: String, inventory: ItemInventory) -> void:
     content.add_child(title)
     var grid := GridContainer.new()
     grid.columns = 8
-    content.add_child(grid)
+    if inventory.size() > 32:
+        # Keep large chests readable rather than shrinking every slot to fit.
+        var scroll := ScrollContainer.new()
+        scroll.name = "LargeChestScroll"
+        scroll.custom_minimum_size = Vector2(540, 200)
+        scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+        content.add_child(scroll)
+        scroll.add_child(grid)
+    else:
+        content.add_child(grid)
     for i in range(inventory.size()):
         var button := InventorySlot.new()
         button.inventory = inventory

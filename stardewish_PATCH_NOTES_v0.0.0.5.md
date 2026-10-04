@@ -1,3 +1,5 @@
+Graphics update: supplied open/closed chest sprites replace procedural chest drawing; added an independent 64-slot large chest and scrolling transfer grid. Individual directional sprite bushes with configurable base slow footprints replace tiled bush strips.
+
 Inventory control update: drag or click-then-place to move, merge, and swap within or between inventories. Double-click quick-transfers while a chest is open. Cancelled drops and partial merges preserve remaining items.
 
 # v0.0.0.6 — Interaction, fruit drops, inventory and chest
