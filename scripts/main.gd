@@ -5,9 +5,14 @@ const BUSH_TEXTURE := preload("res://assets/terrain/bush_tile.png")
 const ROCK_TEXTURE := preload("res://assets/terrain/rock_tile.png")
 
 const HUD_MARGIN := 18.0
-const BOTTOM_SIZE := Vector2(600.0, 28.0)
+const BOTTOM_SIZE := Vector2(760.0, 48.0)
 const VERSION_SIZE := Vector2(240.0, 26.0)
 
+var catalog: ItemCatalog
+var inventory: ItemInventory
+var inventory_ui: InventoryUI
+var interaction_detector: InteractionDetector
+var fruit_tree_count := 0
 var config: Dictionary = {}
 var terrain_config: Dictionary = {}
 
@@ -32,11 +37,23 @@ func _ready() -> void:
     config = GameConfig.load_data()
     terrain_config = config.get("terrain", {})
 
+    catalog = ItemCatalog.new()
+    inventory = ItemInventory.new(catalog, int(config.get("inventory", {}).get("player_slots", 16)))
+    inventory_ui = InventoryUI.new()
+    add_child(inventory_ui)
+    inventory_ui.bind(inventory)
+    interaction_detector = InteractionDetector.new()
+    interaction_detector.actor = player
+    interaction_detector.reach = float(config.get("interaction", {}).get("reach", 52))
+    interaction_detector.half_width = float(config.get("interaction", {}).get("half_width", 24))
+    player.add_child(interaction_detector)
+    inventory_ui.open_changed.connect(_on_inventory_open_changed)
     _build_test_area()
+    _add_chest()
     _connect_player_signals()
 
-    controls_text.text = "WASD Walk   |   Shift Run   |   Left Alt Dash   |   F1 Infinite stamina   |   F2 Change skin"
-    version_text.text = "Movement Sandbox  v%s" % str(config.get("balance_version", "0.0.0.5"))
+    controls_text.text = "WASD Walk | Shift Run | Left Alt Dash | F1 Infinite stamina | F2 Skin\nE Interact | I Inventory | Walk over fruit to collect | Esc Close"
+    version_text.text = "Interaction Sandbox  v%s" % str(config.get("balance_version", "0.0.0.6"))
 
     _on_stamina_changed(player.stamina, player.max_stamina)
     _on_terrain_changed(player.current_terrain, player.terrain_multiplier)
@@ -166,7 +183,44 @@ func _build_test_area() -> void:
     _add_bush(Vector2(780, 470), Vector2(26.0, 18.0))
 
 func _set_y_sort(node: Node2D, sort_y: float) -> void:
-    node.z_index = int(round(sort_y))
+    node.set_meta("sort_y", sort_y)
+    node.z_index = roundi(to_global(Vector2(0, sort_y)).y)
+
+func _process(_delta: float) -> void:
+    for child in get_children():
+        if child is Node2D and child.has_meta("sort_y"):
+            child.z_index = roundi(to_global(Vector2(0, float(child.get_meta("sort_y")))).y)
+    if interaction_detector != null and not inventory_ui.is_open:
+        var target := interaction_detector.closest_target()
+        inventory_ui.prompt.text = "E: %s" % target.interaction_label if target != null else ""
+    elif inventory_ui != null:
+        inventory_ui.prompt.text = ""
+
+func _on_inventory_open_changed(open: bool) -> void:
+    player.inventory_open = open
+    interaction_detector.blocked = open
+
+func _add_chest() -> void:
+    var chest := TestChest.new()
+    chest.name = "TestChest"
+    chest.position = Vector2(570, 350)
+    chest.inventory = ItemInventory.new(catalog, TestChest.SLOT_COUNT)
+    for id in ["apple_red", "orange", "pear", "cherry", "peach", "strawberry"]:
+        chest.inventory.add_items(id, 8)
+    chest.opened.connect(inventory_ui.open_chest)
+    add_child(chest)
+
+func _spawn_pickup(id: String, quantity: int, local_position: Vector2) -> void:
+    var pickup := WorldPickup.new()
+    pickup.item_id = id
+    pickup.quantity = quantity
+    pickup.catalog = catalog
+    pickup.inventory = inventory
+    pickup.actor = player
+    pickup.position = local_position
+    pickup.pickup_radius = float(config.get("pickups", {}).get("radius", 19))
+    pickup.grace_left = float(config.get("pickups", {}).get("grace_seconds", 0.7))
+    add_child(pickup)
 
 func _add_solid_rect(rect: Rect2, label_name: String) -> void:
     var body := StaticBody2D.new()
@@ -177,6 +231,7 @@ func _add_solid_rect(rect: Rect2, label_name: String) -> void:
     _set_y_sort(body, rect.end.y)
 
     var shape_node := CollisionShape2D.new()
+    shape_node.name = "CollisionShape2D"
     var shape := RectangleShape2D.new()
     shape.size = rect.size
     shape_node.shape = shape
@@ -215,8 +270,16 @@ func _add_solid_rect(rect: Rect2, label_name: String) -> void:
     add_child(body)
 
 func _add_tree(tree_pos: Vector2) -> void:
-    var body := StaticBody2D.new()
+    var body := FruitTree.new()
     body.name = "Tree"
+    body.settings = config.get("tree_drops", {})
+    var fruit_ids: Array = body.settings.get("fruit_ids", [])
+    if not fruit_ids.is_empty():
+        body.drop_item_id = str(fruit_ids[fruit_tree_count % fruit_ids.size()])
+    fruit_tree_count += 1
+    body.interaction_offset = Vector2(0, 13)
+    body.interaction_label = "Shake tree (%s)" % catalog.display_name(body.drop_item_id)
+    body.drop_requested.connect(_spawn_pickup)
     body.collision_layer = 1
     body.collision_mask = 1
     body.position = tree_pos
@@ -230,6 +293,7 @@ func _add_tree(tree_pos: Vector2) -> void:
     body.add_child(shadow)
 
     var shape_node := CollisionShape2D.new()
+    shape_node.name = "CollisionShape2D"
     var shape := RectangleShape2D.new()
     shape.size = Vector2(14.0, 18.0)
     shape_node.position = Vector2(0.0, 13.0)

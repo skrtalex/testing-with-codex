@@ -4,7 +4,9 @@
 
 The original ChatGPT conversation became long and increasingly awkward to continue. This document is intended to let development continue in Codex without needing the full chat history.
 
-**Current source-of-truth build:** `stardewish_demo_v0.0.0.5`
+**Current source-of-truth build:** `StarDewy` v0.0.0.6
+
+The interaction/item/inventory slice is documented in README.md. Use E for interaction, I for player inventory, and click stacks for chest transfers. The version-specific details below describe the earlier v0.0.0.5 movement handoff.
 
 ## Project goal
 
@@ -157,26 +159,26 @@ project.godot
 data/game_config.json
 
 scenes/
-└── Main.tscn
+â””â”€â”€ Main.tscn
 
 scripts/
-├── game_config.gd
-├── main.gd
-└── player.gd
+â”œâ”€â”€ game_config.gd
+â”œâ”€â”€ main.gd
+â””â”€â”€ player.gd
 
 assets/
-├── characters/
-│   └── villagers/
-│       └── skin_01.png ... skin_09.png
-├── source/
-│   └── characters/
-│       └── lexlom/
-│           ├── ModelSheet.kra
-│           ├── VillagersSheet.kra
-│           └── SOURCE.txt
-└── terrain/
-    ├── bush_tile.png
-    └── rock_tile.png
+â”œâ”€â”€ characters/
+â”‚   â””â”€â”€ villagers/
+â”‚       â””â”€â”€ skin_01.png ... skin_09.png
+â”œâ”€â”€ source/
+â”‚   â””â”€â”€ characters/
+â”‚       â””â”€â”€ lexlom/
+â”‚           â”œâ”€â”€ ModelSheet.kra
+â”‚           â”œâ”€â”€ VillagersSheet.kra
+â”‚           â””â”€â”€ SOURCE.txt
+â””â”€â”€ terrain/
+    â”œâ”€â”€ bush_tile.png
+    â””â”€â”€ rock_tile.png
 ```
 
 ### `game_config.gd`
@@ -263,7 +265,7 @@ v0.0.0.2 claimed to add terrain textures and resizing, but the user's screenshot
 
 Do not assume every historical patch note means the feature worked correctly on the first attempt.
 
-## Suggested immediate Codex task
+## Historical suggested v0.0.0.5 Codex task
 
 Start with:
 

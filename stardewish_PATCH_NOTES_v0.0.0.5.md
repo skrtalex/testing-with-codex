@@ -1,10 +1,21 @@
+# v0.0.0.6 — Interaction, fruit drops, inventory and chest
+
+- Added shared interaction, item catalog, inventory stack, world pickup, tree drop, and chest transfer scripts.
+- Every existing tree shakes its canopy and scatters a configurable random quantity of an assigned fruit. Cooldown prevents repeated spawning; trunk collision remains unchanged.
+- Added 42 fruit sprite variants with matching data definitions, retaining the original source pack.
+- Added configurable 16-slot player inventory and a fixed 32-slot chest prefilled with fruit.
+- Added I inventory controls and click-based transfer in both directions. Partial additions retain excess fruit/stacks at their source.
+- Added headless integration tests and a rendered key/mouse smoke test; human game-feel review remains required.
+
+The v0.0.0.5 notes below are retained as release history.
+
 # Patch Notes / Development History
 
 These notes reflect both what was implemented and what the user actually reported during testing.
 
 ---
 
-## v0.0.0.1 — Initial movement sandbox
+## v0.0.0.1 â€” Initial movement sandbox
 
 ### Added
 - Godot 4.x project skeleton.
@@ -47,7 +58,7 @@ These notes reflect both what was implemented and what the user actually reporte
 
 ---
 
-## v0.0.0.2 — Tree collision / first visual + resize attempt
+## v0.0.0.2 â€” Tree collision / first visual + resize attempt
 
 ### Intended changes
 - Add bush texture.
@@ -69,7 +80,7 @@ This version should be treated as an intermediate attempt rather than a fully su
 
 ---
 
-## v0.0.0.3 — Terrain rendering + responsive test window/HUD
+## v0.0.0.3 â€” Terrain rendering + responsive test window/HUD
 
 ### Fixed / added
 - Corrected bush/rock texture rendering so the terrain visuals could actually be seen.
@@ -89,7 +100,7 @@ This is still a single-screen sandbox scaled as one logical world. A larger actu
 
 ---
 
-## v0.0.0.4 — 3/4 presentation shift + Y-sorting
+## v0.0.0.4 â€” 3/4 presentation shift + Y-sorting
 
 ### Goal
 Move away from the flat/top-down prototype without converting the game to real 3D.
@@ -130,7 +141,7 @@ This confirmed the chosen visual direction:
 
 ---
 
-## v0.0.0.5 — Animated player sprites + skin switching
+## v0.0.0.5 â€” Animated player sprites + skin switching
 
 ### Source asset
 Lexlom 32-character pixel-art pack:
@@ -182,7 +193,7 @@ At the time of this release, the producing environment could inspect files but c
 
 # Current build summary
 
-**Latest:** v0.0.0.5
+**Latest:** v0.0.0.6
 
 Controls:
 
@@ -192,6 +203,9 @@ Shift     Run
 Left Alt  Dash
 F1        Toggle infinite stamina
 F2        Change player skin
+E         Interact / close chest
+I         Player inventory
+Esc       Close inventory
 ```
 
 Current focus:
