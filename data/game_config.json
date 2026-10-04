@@ -1,0 +1,55 @@
+{
+  "balance_version": "0.0.0.5",
+  "player": {
+    "base_stats": {
+      "max_stamina": 100.0
+    },
+    "movement": {
+      "walk_speed": 100.0,
+      "run_speed": 170.0,
+      "dash_speed": 340.0,
+      "dash_duration": 0.18,
+      "dash_cost": 25.0,
+      "dash_cooldown": 0.35
+    },
+    "stamina": {
+      "run_cost_per_second": 15.0,
+      "regen_per_second": 25.0,
+      "regen_delay": 0.75
+    },
+    "modifiers": {
+      "flat": {},
+      "multipliers": {}
+    },
+    "visuals": {
+      "default_skin": 0,
+      "walk_animation_fps": 6.0,
+      "run_animation_fps": 10.0,
+      "dash_animation_fps": 14.0,
+      "sprite_offset_y": -8.0
+    }
+  },
+  "terrain": {
+    "normal": {
+      "movement_multiplier": 1.0
+    },
+    "bush": {
+      "movement_multiplier": 0.75
+    },
+    "rocks": {
+      "movement_multiplier": 0.55
+    }
+  },
+  "debug": {
+    "infinite_stamina_default": false,
+    "show_debug_values": true
+  },
+  "progression": {
+    "enabled": false,
+    "skills": {
+      "athletics": {
+        "enabled": false
+      }
+    }
+  }
+}

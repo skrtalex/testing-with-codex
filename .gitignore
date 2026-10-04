@@ -1,0 +1,16 @@
+# Godot generated files
+.godot/
+
+# Godot exports/builds
+build/
+exports/
+*.exe
+*.pck
+
+# IDE/editor files
+.idea/
+.vscode/
+
+# Windows/macOS junk
+Thumbs.db
+.DS_Store

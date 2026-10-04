@@ -1,0 +1,16 @@
+Source asset pack:
+https://lexlom.itch.io/32-character-pack-pixel-art-4-direction-idle-walking
+
+Original editable files supplied by the project owner:
+- ModelSheet.kra
+- VillagersSheet.kra
+
+Runtime PNG sheets are exported to:
+assets/characters/villagers/
+
+Each exported sheet is 96x192 px:
+- 3 animation frames per row
+- row 0: facing down/front
+- row 1: facing up/back
+- row 2: side-facing (flipped in-engine for left)
+- each frame cell: 32x64 px
