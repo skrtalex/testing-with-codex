@@ -14,3 +14,4 @@ exports/
 # Windows/macOS junk
 Thumbs.db
 .DS_Store
+assets/source/**/*.import
