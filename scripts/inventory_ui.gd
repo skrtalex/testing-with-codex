@@ -9,6 +9,8 @@ var panel: PanelContainer
 var content: VBoxContainer
 var status: Label
 var selected := -1
+var selected_inventory: ItemInventory
+var slot_buttons: Array[InventorySlot] = []
 var is_open := false
 var prompt: Label
 
@@ -36,7 +38,9 @@ func open_chest(inventory: ItemInventory) -> void:
     chest_inventory = inventory
     chest_inventory.changed.connect(_refresh)
     selected = -1
+    selected_inventory = null
     is_open = true
+    _build_content()
     _refresh()
     panel.show()
     open_changed.emit(true)
@@ -49,6 +53,7 @@ func _disconnect_chest() -> void:
 func close() -> void:
     is_open = false
     selected = -1
+    selected_inventory = null
     _disconnect_chest()
     panel.hide()
     open_changed.emit(false)
@@ -58,7 +63,9 @@ func toggle_player() -> void:
         close()
         return
     selected = -1
+    selected_inventory = null
     is_open = true
+    _build_content()
     _refresh()
     panel.show()
     open_changed.emit(true)
@@ -72,9 +79,8 @@ func _input(event: InputEvent) -> void:
             close()
             get_viewport().set_input_as_handled()
 
-func _refresh() -> void:
-    if not is_open:
-        return
+func _build_content() -> void:
+    slot_buttons.clear()
     for child in content.get_children():
         content.remove_child(child)
         child.queue_free()
@@ -82,7 +88,7 @@ func _refresh() -> void:
     title.text = "Chest transfer" if chest_inventory != null else "Player inventory"
     content.add_child(title)
     var hint := Label.new()
-    hint.text = "Click a stack to transfer it. I / E / Esc closes." if chest_inventory != null else "Click a stack, then a slot to move or merge. I / Esc closes."
+    hint.text = "Drag or click then place. Double-click transfers. I / E / Esc closes." if chest_inventory != null else "Drag or click then place to move, merge or swap. I / Esc closes."
     hint.add_theme_font_size_override("font_size", 13)
     content.add_child(hint)
     _add_grid("Player (%d slots)" % player_inventory.size(), player_inventory)
@@ -106,40 +112,92 @@ func _add_grid(title_text: String, inventory: ItemInventory) -> void:
     grid.columns = 8
     content.add_child(grid)
     for i in range(inventory.size()):
-        var button := Button.new()
+        var button := InventorySlot.new()
+        button.inventory = inventory
+        button.index = i
+        button.inventory_ui = self
+        slot_buttons.append(button)
         button.name = "Slot%d" % i
         button.custom_minimum_size = Vector2(62, 45)
         button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
         button.expand_icon = true
         button.add_theme_constant_override("icon_max_width", 28)
-        var stack := inventory.slot(i)
-        if stack.is_empty():
-            button.text = "-"
-            button.tooltip_text = "Empty slot"
-        else:
-            button.icon = inventory.catalog.icon(stack["item_id"])
-            button.text = str(stack["quantity"])
-            button.tooltip_text = "%s (%d / %d)" % [inventory.catalog.display_name(stack["item_id"]), stack["quantity"], inventory.catalog.stack_limit(stack["item_id"])]
-        if chest_inventory == null and selected == i:
-            button.modulate = Color("ffe08a")
-        button.pressed.connect(_slot_clicked.bind(inventory, i))
+        button.clicked.connect(_slot_clicked)
+        button.double_clicked.connect(_slot_double_clicked)
         grid.add_child(button)
 
+func _refresh() -> void:
+    if not is_open:
+        return
+    # Preserve slot controls across updates so drags, double-clicks and focus survive.
+    for button in slot_buttons:
+        var stack := button.inventory.slot(button.index)
+        button.icon = null
+        button.text = "-"
+        button.tooltip_text = "Empty slot"
+        if not stack.is_empty():
+            button.icon = button.inventory.catalog.icon(stack["item_id"])
+            button.text = str(stack["quantity"])
+            button.tooltip_text = "%s (%d / %d)" % [button.inventory.catalog.display_name(stack["item_id"]), stack["quantity"], button.inventory.catalog.stack_limit(stack["item_id"])]
+        button.modulate = Color("ffe08a") if selected_inventory == button.inventory and selected == button.index else Color.WHITE
+
+func clear_selection() -> void:
+    selected = -1
+    selected_inventory = null
+    _refresh()
+
 func _slot_clicked(source: ItemInventory, index: int) -> void:
-    if chest_inventory != null:
-        var destination := chest_inventory if source == player_inventory else player_inventory
-        var moved := source.transfer_stack(index, destination)
-        if moved == 0 and not source.slot(index).is_empty():
-            status.text = "Destination full: stack retained."
-    elif selected < 0:
+    if not is_open:
+        return
+    if selected_inventory == null:
         if not source.slot(index).is_empty():
             selected = index
+            selected_inventory = source
             _refresh()
+        return
+    var from := selected
+    var origin := selected_inventory
+    clear_selection()
+    if origin == source and from == index:
+        return
+    if not origin.move_to_slot(from, source, index):
+        status.text = "Cannot move here: stack retained."
     else:
-        var from := selected
-        selected = -1
-        source.move_stack(from, index)
-        _refresh()
+        status.text = "Stack moved."
+
+func _slot_double_clicked(source: ItemInventory, index: int) -> void:
+    clear_selection()
+    if not is_open or chest_inventory == null:
+        return
+    var quantity := int(source.slot(index).get("quantity", 0))
+    var destination := chest_inventory if source == player_inventory else player_inventory
+    var moved := source.transfer_stack(index, destination)
+    status.text = "Transferred %d; %d remain." % [moved, quantity - moved] if moved < quantity else "Stack transferred."
+
+func can_drop_stack(data: Variant, destination: ItemInventory, index: int) -> bool:
+    if not is_open or not data is Dictionary or data.get("ui") != self:
+        return false
+    var source = data.get("inventory")
+    if source == null or source not in [player_inventory, chest_inventory] or destination not in [player_inventory, chest_inventory]:
+        return false
+    var from := int(data.get("index", -1))
+    if from < 0 or from >= source.size() or index < 0 or index >= destination.size():
+        return false
+    var stack: Dictionary = source.slot(from)
+    if stack.is_empty() or stack != data.get("stack") or (source == destination and from == index):
+        return false
+    var target := destination.slot(index)
+    if not target.is_empty() and stack["item_id"] == target["item_id"]:
+        return int(target["quantity"]) < destination.catalog.stack_limit(stack["item_id"])
+    return true
+
+func drop_stack(data: Variant, destination: ItemInventory, index: int) -> void:
+    if not can_drop_stack(data, destination, index):
+        return
+    var source: ItemInventory = data["inventory"]
+    clear_selection()
+    source.move_to_slot(int(data["index"]), destination, index)
+    status.text = "Stack placed; any merge remainder stays in its original slot."
 
 func _layout() -> void:
     if not is_instance_valid(panel):

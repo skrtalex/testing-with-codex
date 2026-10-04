@@ -7,8 +7,8 @@ A tiny Godot 4.x prototype focused on movement feel, stamina, terrain, 3/4 prese
 - Face a nearby tree or chest and press **E**. The closest eligible object in front is selected; walls block interaction.
 - Trees shake and scatter 1–3 fruit by default, with a 3-second cooldown. Each tree keeps its assigned fruit for the run.
 - Walk over drops to collect them. Pickups wait briefly after spawning, and full inventories leave excess fruit in the world.
-- Press **I** for the 16-slot player inventory. Click a stack, then another slot to move, merge, or swap it.
-- The test chest near the starting position has exactly **32 slots**, prefilled with six fruit stacks. Press E to open both inventories; click any stack to transfer as much as the destination accepts.
+- Press **I** for the 16-slot player inventory. Drag a stack onto a slot, or click a stack then a destination, to move, merge, or swap it.
+- The test chest near the starting position has exactly **32 slots**, prefilled with six fruit stacks. Press E to open both inventories; double-click a stack to transfer as much as the destination accepts. Dragging or click-then-place allows precise placement, merging, and swapping within either inventory or between them.
 - **I / Esc** closes the inventory; **E** also closes the chest. Movement and pickup pause while a panel is open. Chest contents persist during the run; no save system is added.
 
 ## Included
@@ -138,3 +138,19 @@ Run the configured Godot executable against this checkout; use `AGENTS.md` as th
 The headless suite verifies capacity, splitting/merging/swapping, partial pickup/transfer without item loss, closest/facing interaction, tree cooldown/drop range, icon loading, chest persistence, UI layout, skins, dash stamina, terrain slowing, and scaled depth order. The rendered smoke test sends E/I/Esc and mouse clicks through the viewport and captures the flow. Set `V006_CAPTURE_DIR` to choose a screenshot output directory (defaults to `user://visual_checks`).
 
 Human playtest checklist: walk/run/dash to every tree, face it and press E, inspect the shake and fruit scatter, collect fruit, move stacks with I, transfer both ways at the chest, fill inventory to check leftovers, reopen the chest, cycle skins, and resize the window to inspect canopy depth and HUD. Automated input checks do not establish game feel or replace this manual review.
+
+### Inventory mouse controls
+
+| Action | Result |
+|---|---|
+| Drag to an empty slot | Move the whole stack |
+| Drag onto the same item | Merge to its stack limit; excess stays in the source slot |
+| Drag onto a different item | Swap stacks, within or between player/chest inventories |
+| Click a stack, then another slot | The same targeted move/merge/swap behavior |
+| Double-click with chest open | Transfer to the other inventory, retaining anything that does not fit |
+| Double-click with player inventory alone | No quick transfer; items remain in place |
+| Drop outside or close during a drag | Cancel without moving or losing items |
+
+InventorySlot handles native Godot drag previews, targeted drops, click selection, and double-click transfers. Slot controls remain in place during inventory updates so pointer gestures survive refreshes. ItemInventory.move_to_slot updates both inventories atomically before emitting change signals. Full matching stacks reject drops; drag data is checked against the current source stack to reject stale drags.
+
+Rendered tests exercise double-click transfer both ways, dragging within the chest and player inventory, cross-inventory swaps, partial/full merges, outside cancellation, closing mid-drag, and small-window controls.

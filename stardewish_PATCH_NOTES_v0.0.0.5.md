@@ -1,10 +1,12 @@
+Inventory control update: drag or click-then-place to move, merge, and swap within or between inventories. Double-click quick-transfers while a chest is open. Cancelled drops and partial merges preserve remaining items.
+
 # v0.0.0.6 — Interaction, fruit drops, inventory and chest
 
 - Added shared interaction, item catalog, inventory stack, world pickup, tree drop, and chest transfer scripts.
 - Every existing tree shakes its canopy and scatters a configurable random quantity of an assigned fruit. Cooldown prevents repeated spawning; trunk collision remains unchanged.
 - Added 42 fruit sprite variants with matching data definitions, retaining the original source pack.
 - Added configurable 16-slot player inventory and a fixed 32-slot chest prefilled with fruit.
-- Added I inventory controls and click-based transfer in both directions. Partial additions retain excess fruit/stacks at their source.
+- Added I inventory controls and drag-and-drop, click-then-place, and double-click quick transfer in both directions. Partial additions retain excess fruit/stacks at their source.
 - Added headless integration tests and a rendered key/mouse smoke test; human game-feel review remains required.
 
 The v0.0.0.5 notes below are retained as release history.
