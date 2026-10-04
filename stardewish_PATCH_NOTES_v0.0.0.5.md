@@ -141,7 +141,7 @@ The user supplied the editable Krita `.kra` source files.
 
 ### Added
 - Replaced the hand-drawn placeholder player with an actual sprite-based character.
-- Exported/organized **15 runtime player skins**.
+- Exported/organized **9 runtime-compatible player skins**; six malformed fixed-width crops were removed.
 - Added proper runtime asset folder:
   - `assets/characters/villagers/`
 - Added proper editable-source folder:

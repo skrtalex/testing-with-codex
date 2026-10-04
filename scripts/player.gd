@@ -7,7 +7,7 @@ signal infinite_stamina_changed(enabled: bool)
 signal movement_state_changed(state_name: String, speed: float)
 signal skin_changed(index: int, total: int)
 
-const SKIN_COUNT := 15
+const SKIN_COUNT := 9
 const SKIN_PATH_TEMPLATE := "res://assets/characters/villagers/skin_%02d.png"
 const FRAME_SIZE := Vector2(32.0, 64.0)
 const WALK_SEQUENCE := [0, 1, 2, 1]
@@ -51,13 +51,28 @@ var last_reported_speed := -1.0
 var visual_state := "Idle"
 var animation_time := 0.0
 
-@onready var terrain_detector: Area2D = $TerrainDetector
-@onready var character_sprite: Sprite2D = $CharacterSprite
+var terrain_detector: Area2D
+var character_sprite: Sprite2D
 
 func _ready() -> void:
+    print("DemoPlayer: initializing")
+    terrain_detector = get_node_or_null("TerrainDetector") as Area2D
+    character_sprite = get_node_or_null("CharacterSprite") as Sprite2D
+    if terrain_detector == null or character_sprite == null:
+        if terrain_detector == null:
+            push_error("DemoPlayer: missing required node 'TerrainDetector'.")
+        if character_sprite == null:
+            push_error("DemoPlayer: missing required node 'CharacterSprite'.")
+        set_physics_process(false)
+        set_process_unhandled_input(false)
+        return
+
     _load_config()
-    terrain_detector.area_entered.connect(_on_terrain_entered)
-    terrain_detector.area_exited.connect(_on_terrain_exited)
+    if not terrain_detector.area_entered.is_connected(_on_terrain_entered):
+        terrain_detector.area_entered.connect(_on_terrain_entered)
+    if not terrain_detector.area_exited.is_connected(_on_terrain_exited):
+        terrain_detector.area_exited.connect(_on_terrain_exited)
+    print("DemoPlayer: terrain callbacks connected")
 
     character_sprite.position.y = sprite_offset_y
     _apply_skin(current_skin)
@@ -81,24 +96,24 @@ func _load_config() -> void:
     var visuals_cfg: Dictionary = player_cfg.get("visuals", {})
     var debug_cfg: Dictionary = config.get("debug", {})
 
-    max_stamina = float(base_stats.get("max_stamina", max_stamina))
+    max_stamina = maxf(0.0, float(base_stats.get("max_stamina", max_stamina)))
     stamina = max_stamina
 
-    walk_speed = float(movement.get("walk_speed", walk_speed))
-    run_speed = float(movement.get("run_speed", run_speed))
-    dash_speed = float(movement.get("dash_speed", dash_speed))
-    dash_duration = float(movement.get("dash_duration", dash_duration))
-    dash_cost = float(movement.get("dash_cost", dash_cost))
-    dash_cooldown = float(movement.get("dash_cooldown", dash_cooldown))
+    walk_speed = maxf(0.0, float(movement.get("walk_speed", walk_speed)))
+    run_speed = maxf(0.0, float(movement.get("run_speed", run_speed)))
+    dash_speed = maxf(0.0, float(movement.get("dash_speed", dash_speed)))
+    dash_duration = maxf(0.0, float(movement.get("dash_duration", dash_duration)))
+    dash_cost = maxf(0.0, float(movement.get("dash_cost", dash_cost)))
+    dash_cooldown = maxf(0.0, float(movement.get("dash_cooldown", dash_cooldown)))
 
-    run_cost_per_second = float(stamina_cfg.get("run_cost_per_second", run_cost_per_second))
-    stamina_regen_per_second = float(stamina_cfg.get("regen_per_second", stamina_regen_per_second))
-    stamina_regen_delay = float(stamina_cfg.get("regen_delay", stamina_regen_delay))
+    run_cost_per_second = maxf(0.0, float(stamina_cfg.get("run_cost_per_second", run_cost_per_second)))
+    stamina_regen_per_second = maxf(0.0, float(stamina_cfg.get("regen_per_second", stamina_regen_per_second)))
+    stamina_regen_delay = maxf(0.0, float(stamina_cfg.get("regen_delay", stamina_regen_delay)))
 
     current_skin = clampi(int(visuals_cfg.get("default_skin", current_skin)), 0, SKIN_COUNT - 1)
-    walk_animation_fps = float(visuals_cfg.get("walk_animation_fps", walk_animation_fps))
-    run_animation_fps = float(visuals_cfg.get("run_animation_fps", run_animation_fps))
-    dash_animation_fps = float(visuals_cfg.get("dash_animation_fps", dash_animation_fps))
+    walk_animation_fps = maxf(0.0, float(visuals_cfg.get("walk_animation_fps", walk_animation_fps)))
+    run_animation_fps = maxf(0.0, float(visuals_cfg.get("run_animation_fps", run_animation_fps)))
+    dash_animation_fps = maxf(0.0, float(visuals_cfg.get("dash_animation_fps", dash_animation_fps)))
     sprite_offset_y = float(visuals_cfg.get("sprite_offset_y", sprite_offset_y))
 
     infinite_stamina = bool(debug_cfg.get("infinite_stamina_default", false))
@@ -200,8 +215,12 @@ func _try_dash() -> void:
 
     if not infinite_stamina:
         _spend_stamina(dash_cost)
+    print("DemoPlayer: dash started in direction %s" % dash_direction)
 
 func _apply_skin(index: int) -> void:
+    if character_sprite == null:
+        push_error("DemoPlayer: cannot apply a skin without 'CharacterSprite'.")
+        return
     current_skin = (index + SKIN_COUNT) % SKIN_COUNT
     var path := SKIN_PATH_TEMPLATE % (current_skin + 1)
     var loaded_texture := load(path) as Texture2D
@@ -288,7 +307,7 @@ func _on_terrain_entered(area: Area2D) -> void:
 
     terrain_overlaps[area.get_instance_id()] = {
         "name": str(area.get_meta("terrain_name")),
-        "multiplier": float(area.get_meta("movement_multiplier", 1.0))
+        "multiplier": maxf(0.0, float(area.get_meta("movement_multiplier", 1.0)))
     }
     _recalculate_terrain()
 
