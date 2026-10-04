@@ -176,7 +176,7 @@ The user supplied the editable Krita `.kra` source files.
 ### Runtime verification
 This was the newest build when the conversation handoff was created.
 
-The producing environment could inspect files but could not launch Godot, so v0.0.0.5 should be locally run and verified before further feature work.
+At the time of this release, the producing environment could inspect files but could not launch Godot. This is a historical verification limitation, not an instruction to assume Godot is unavailable. Current Codex sessions must follow [AGENTS.md](AGENTS.md) and attempt the headless editor and runtime checks when relevant. Visual appearance and game feel require interactive playtesting or suitable automated tests.
 
 ---
 
