@@ -12,19 +12,24 @@ const VERSION_SIZE := Vector2(240.0, 26.0)
 var config: Dictionary = {}
 var terrain_config: Dictionary = {}
 
-@onready var player: DemoPlayer = $Player
-@onready var top_left_hud: Control = $HUD/Root/TopLeft
-@onready var bottom_controls: Control = $HUD/Root/BottomControls
-@onready var version_text: Label = $HUD/Root/VersionText
-@onready var stamina_bar: ProgressBar = $HUD/Root/TopLeft/StaminaBar
-@onready var stamina_text: Label = $HUD/Root/TopLeft/StaminaText
-@onready var terrain_text: Label = $HUD/Root/TopLeft/TerrainText
-@onready var movement_text: Label = $HUD/Root/TopLeft/MovementText
-@onready var debug_text: Label = $HUD/Root/TopLeft/DebugText
-@onready var skin_text: Label = $HUD/Root/TopLeft/SkinText
-@onready var controls_text: Label = $HUD/Root/BottomControls/ControlsText
+var player: DemoPlayer
+var top_left_hud: Control
+var bottom_controls: Control
+var version_text: Label
+var stamina_bar: ProgressBar
+var stamina_text: Label
+var terrain_text: Label
+var movement_text: Label
+var debug_text: Label
+var skin_text: Label
+var controls_text: Label
 
 func _ready() -> void:
+    print("Main: initializing movement sandbox")
+    if not _find_scene_nodes():
+        push_error("Main: required scene nodes are missing; initialization stopped.")
+        return
+
     config = GameConfig.load_data()
     terrain_config = config.get("terrain", {})
 
@@ -39,16 +44,58 @@ func _ready() -> void:
     _on_infinite_stamina_changed(player.infinite_stamina)
     _on_skin_changed(player.current_skin, player.get_skin_count())
 
-    get_viewport().size_changed.connect(_update_layout)
+    if not get_viewport().size_changed.is_connected(_update_layout):
+        get_viewport().size_changed.connect(_update_layout)
+    print("Main: player signals and viewport layout callback connected")
     _update_layout()
     queue_redraw()
 
+func _find_scene_nodes() -> bool:
+    player = get_node_or_null("Player") as DemoPlayer
+    top_left_hud = get_node_or_null("HUD/Root/TopLeft") as Control
+    bottom_controls = get_node_or_null("HUD/Root/BottomControls") as Control
+    version_text = get_node_or_null("HUD/Root/VersionText") as Label
+    stamina_bar = get_node_or_null("HUD/Root/TopLeft/StaminaBar") as ProgressBar
+    stamina_text = get_node_or_null("HUD/Root/TopLeft/StaminaText") as Label
+    terrain_text = get_node_or_null("HUD/Root/TopLeft/TerrainText") as Label
+    movement_text = get_node_or_null("HUD/Root/TopLeft/MovementText") as Label
+    debug_text = get_node_or_null("HUD/Root/TopLeft/DebugText") as Label
+    skin_text = get_node_or_null("HUD/Root/TopLeft/SkinText") as Label
+    controls_text = get_node_or_null("HUD/Root/BottomControls/ControlsText") as Label
+
+    var required_nodes: Dictionary = {
+        "Player": player,
+        "HUD/Root/TopLeft": top_left_hud,
+        "HUD/Root/BottomControls": bottom_controls,
+        "HUD/Root/VersionText": version_text,
+        "HUD/Root/TopLeft/StaminaBar": stamina_bar,
+        "HUD/Root/TopLeft/StaminaText": stamina_text,
+        "HUD/Root/TopLeft/TerrainText": terrain_text,
+        "HUD/Root/TopLeft/MovementText": movement_text,
+        "HUD/Root/TopLeft/DebugText": debug_text,
+        "HUD/Root/TopLeft/SkinText": skin_text,
+        "HUD/Root/BottomControls/ControlsText": controls_text,
+    }
+    var all_found := true
+    for node_path in required_nodes:
+        if required_nodes[node_path] == null:
+            push_error("Main: missing required node '%s'." % node_path)
+            all_found = false
+    if all_found:
+        print("Main: all required scene nodes found")
+    return all_found
+
 func _connect_player_signals() -> void:
-    player.stamina_changed.connect(_on_stamina_changed)
-    player.terrain_changed.connect(_on_terrain_changed)
-    player.infinite_stamina_changed.connect(_on_infinite_stamina_changed)
-    player.movement_state_changed.connect(_on_movement_state_changed)
-    player.skin_changed.connect(_on_skin_changed)
+    if not player.stamina_changed.is_connected(_on_stamina_changed):
+        player.stamina_changed.connect(_on_stamina_changed)
+    if not player.terrain_changed.is_connected(_on_terrain_changed):
+        player.terrain_changed.connect(_on_terrain_changed)
+    if not player.infinite_stamina_changed.is_connected(_on_infinite_stamina_changed):
+        player.infinite_stamina_changed.connect(_on_infinite_stamina_changed)
+    if not player.movement_state_changed.is_connected(_on_movement_state_changed):
+        player.movement_state_changed.connect(_on_movement_state_changed)
+    if not player.skin_changed.is_connected(_on_skin_changed):
+        player.skin_changed.connect(_on_skin_changed)
 
 func _update_layout() -> void:
     var viewport_size := get_viewport_rect().size
