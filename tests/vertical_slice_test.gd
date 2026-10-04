@@ -100,6 +100,10 @@ func run() -> void:
         check(pickup.try_pickup() == 2 and pickup.is_queued_for_deletion(), "successful pickup removes world object")
     var chest := main.get_node("TestChest") as TestChest
     check(chest.inventory.size() == 32, "exactly 32 chest slots")
+    check(chest.sprite.texture.resource_path.ends_with("/box.png"), "small chest closed sprite")
+    var large := main.get_node("LargeChest") as TestChest
+    check(large.inventory.size() == 64, "exactly 64 large chest slots")
+    check(large.sprite.texture.resource_path.ends_with("/box-large.png"), "large chest closed sprite")
     player.position = chest.position + Vector2(0, 35)
     player.last_facing = Vector2.UP
     await physics_frame
@@ -107,6 +111,7 @@ func run() -> void:
     detector.try_interact()
     check(main.inventory_ui.is_open and main.inventory_ui.chest_inventory == chest.inventory, "interaction opens transfer UI")
     check(player.inventory_open, "movement blocked while UI open")
+    check(chest.is_open and chest.sprite.texture.resource_path.ends_with("/box-open.png"), "small chest open sprite")
     var before := chest.inventory.slot(0)
     main.inventory_ui._slot_double_clicked(chest.inventory, 0)
     check(chest.inventory.slot(0).is_empty(), "click chest to player transfer")
@@ -116,6 +121,17 @@ func run() -> void:
     main.inventory_ui.close()
     chest.interact(player)
     check(chest.inventory.slot(0) == before, "chest persists across reopen")
+    main.inventory_ui.close()
+    check(not chest.is_open and chest.sprite.texture.resource_path.ends_with("/box.png"), "small chest closes with UI")
+    large.interact(player)
+    check(large.is_open and large.sprite.texture.resource_path.ends_with("/box-large-open.png"), "large chest open sprite")
+    check(main.inventory_ui.slot_buttons.size() == main.inventory.size() + 64, "all large chest slots rendered")
+    check(main.inventory_ui.content.get_child(4).text == "Chest (64 slots)", "large capacity label")
+    large.inventory.remove_items(0, 2)
+    main.inventory_ui.close()
+    check(not large.is_open, "large lid closes with UI")
+    large.interact(player)
+    check(large.inventory.slot(0)["quantity"] == 6, "large chest persists across reopening")
     main.inventory_ui.close()
     var key := InputEventKey.new()
     key.keycode = KEY_I
@@ -132,8 +148,30 @@ func run() -> void:
     player.dash_cooldown_left = 0
     player._try_dash()
     check(player.dash_time_left > 0 and player.stamina == player.max_stamina - player.dash_cost, "dash and stamina retained")
-    player._on_terrain_entered(main.get_node("BushTerrain"))
+    player._on_terrain_entered(main.get_node("SlowBush0"))
     check(is_equal_approx(player.terrain_multiplier, 0.75), "terrain slowing retained")
+    var bushes := get_nodes_in_group("slow_bushes")
+    check(bushes.size() == 11, "individual bushes replace strips")
+    var directions: Dictionary = {}
+    for bush in bushes:
+        directions[bush.bush_texture.resource_path] = true
+        check(bush.collision_layer == 2, "bush has no solid collision layer")
+        check(bush.sprite.region_rect.size.x < 512 and bush.sprite.region_rect.size.x > 0, "transparent padding excluded")
+    check(directions.size() == 4, "all four bush directions used")
+    player.dash_time_left = 0
+    player.velocity = Vector2.ZERO
+    player.terrain_overlaps.clear()
+    player._recalculate_terrain()
+    player.position = bushes[0].position + Vector2(0, -4)
+    await physics_frame
+    await physics_frame
+    await physics_frame
+    check(is_equal_approx(player.terrain_multiplier, 0.75), "actual bush overlap slows player")
+    player.position = Vector2(390, 340)
+    await physics_frame
+    await physics_frame
+    await physics_frame
+    check(is_equal_approx(player.terrain_multiplier, 1.0), "leaving bush returns normal speed")
     # Exercise scaling and modal layout with both a large and small viewport.
     for viewport_size in [Vector2i(1280, 720), Vector2i(640, 480)]:
         root.size = viewport_size
