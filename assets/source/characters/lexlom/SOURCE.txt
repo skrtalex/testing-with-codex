@@ -8,9 +8,13 @@ Original editable files supplied by the project owner:
 Runtime PNG sheets are exported to:
 assets/characters/villagers/
 
-Each exported sheet is 96x192 px:
+The nine runtime-compatible exported sheets are 96x192 px:
 - 3 animation frames per row
 - row 0: facing down/front
 - row 1: facing up/back
 - row 2: side-facing (flipped in-engine for left)
 - each frame cell: 32x64 px
+
+Characters 10-15 in the flattened source extend across adjacent 32 px frame
+boundaries. Fixed-width crops therefore contain pieces of neighboring frames;
+those malformed exports are intentionally excluded from the runtime selector.

@@ -110,7 +110,7 @@ v0.0.0.5 converts/organizes these into:
 - runtime PNG sheets under `assets/characters/villagers/`
 - original editable `.kra` files under `assets/source/characters/lexlom/`
 
-15 prototype skins are currently available.
+9 runtime-compatible prototype skins are currently available.
 
 F2 cycles player skin.
 
@@ -167,7 +167,7 @@ scripts/
 assets/
 ├── characters/
 │   └── villagers/
-│       └── skin_01.png ... skin_15.png
+│       └── skin_01.png ... skin_09.png
 ├── source/
 │   └── characters/
 │       └── lexlom/
@@ -267,6 +267,6 @@ Do not assume every historical patch note means the feature worked correctly on 
 
 Start with:
 
-> Run/inspect v0.0.0.5. Verify the 15-skin player system, directional walk animation, F2 switching, Y-sorting, collision at the feet, and HUD/window scaling. Fix any actual runtime issues without adding unrelated systems. After it is stable, tune walk/run animation feel and sprite offset.
+> Run/inspect v0.0.0.5. Verify the 9-skin player system, directional walk animation, F2 switching, Y-sorting, collision at the feet, and HUD/window scaling. Fix any actual runtime issues without adding unrelated systems. After it is stable, tune walk/run animation feel and sprite offset.
 
 The project should remain a small movement prototype until those fundamentals feel good.

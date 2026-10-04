@@ -119,7 +119,7 @@ Runtime player sheets are stored in:
 `assets/characters/villagers/`
 
 Current setup:
-- 15 player skins
+- 9 runtime-compatible player skins
 - each runtime sheet is `96x192`
 - frame cell is `32x64`
 - 3 frames per direction row

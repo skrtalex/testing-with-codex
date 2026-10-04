@@ -7,7 +7,7 @@ signal infinite_stamina_changed(enabled: bool)
 signal movement_state_changed(state_name: String, speed: float)
 signal skin_changed(index: int, total: int)
 
-const SKIN_COUNT := 15
+const SKIN_COUNT := 9
 const SKIN_PATH_TEMPLATE := "res://assets/characters/villagers/skin_%02d.png"
 const FRAME_SIZE := Vector2(32.0, 64.0)
 const WALK_SEQUENCE := [0, 1, 2, 1]

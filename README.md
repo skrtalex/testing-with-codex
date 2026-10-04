@@ -17,7 +17,7 @@ A tiny Godot 4.x prototype focused on movement feel, stamina, terrain, 3/4 prese
 - Tree trunks and walls are impassable; tree canopies are walk-under
 - 3/4-style depth presentation and Y-based sorting
 - Animated player sprite using the supplied Lexlom character pack
-- 15 selectable prototype skins
+- 9 selectable prototype skins
 - F2 cycles through player skins
 - All tuning values kept in `data/game_config.json`
 - Reserved progression structure for a future Athletics/leveling system, but no leveling logic yet
@@ -43,7 +43,7 @@ Runtime-ready player sheets live in:
 
 `assets/characters/villagers/`
 
-Each `skin_XX.png` is a 96x192 sheet made of 32x64 cells:
+Each of the nine `skin_XX.png` files is a 96x192 sheet made of 32x64 cells:
 
 - row 1: facing down/front
 - row 2: facing up/back
@@ -88,7 +88,7 @@ The current defaults are:
 ## v0.0.0.5
 
 - Added animated character sprites from the supplied Lexlom `.kra` files.
-- Exported 15 runtime PNG skin sheets.
+- Exported 9 runtime-compatible PNG skin sheets.
 - Added F2 skin cycling and current-skin HUD display.
 - Added configurable animation rates and sprite offset.
 - Moved original `.kra` source files into a dedicated source-assets folder.
