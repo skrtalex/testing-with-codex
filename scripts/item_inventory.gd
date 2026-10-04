@@ -64,12 +64,18 @@ func remove_items(index: int, quantity: int) -> int:
 
 # Merges matching stacks, moves to empty slots, or swaps differing stacks.
 func move_stack(source: int, destination: int) -> bool:
-    if not _valid(source) or not _valid(destination) or source == destination or _slots[source].is_empty():
+    return move_to_slot(source, self, destination)
+
+# Slot-targeted moves are atomic, including cross-inventory swaps.
+func move_to_slot(source: int, target: ItemInventory, destination: int) -> bool:
+    if target == null or not _valid(source) or not target._valid(destination) or (target == self and source == destination) or _slots[source].is_empty():
         return false
     var a := _slots[source]
-    var b := _slots[destination]
+    var b := target._slots[destination]
+    if not target.catalog.has_item(a["item_id"]):
+        return false
     if not b.is_empty() and a["item_id"] == b["item_id"]:
-        var amount := mini(int(a["quantity"]), catalog.stack_limit(a["item_id"]) - int(b["quantity"]))
+        var amount := mini(int(a["quantity"]), target.catalog.stack_limit(a["item_id"]) - int(b["quantity"]))
         if amount == 0:
             return false
         b["quantity"] += amount
@@ -77,9 +83,15 @@ func move_stack(source: int, destination: int) -> bool:
         if int(a["quantity"]) == 0:
             _slots[source] = {}
     else:
+        if int(a["quantity"]) > target.catalog.stack_limit(a["item_id"]):
+            return false
+        if not b.is_empty() and (not catalog.has_item(b["item_id"]) or int(b["quantity"]) > catalog.stack_limit(b["item_id"])):
+            return false
         _slots[source] = b
-        _slots[destination] = a
+        target._slots[destination] = a
     changed.emit()
+    if target != self:
+        target.changed.emit()
     return true
 
 func transfer_stack(index: int, destination: ItemInventory) -> int:

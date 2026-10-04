@@ -6,7 +6,7 @@ The original ChatGPT conversation became long and increasingly awkward to contin
 
 **Current source-of-truth build:** `StarDewy` v0.0.0.6
 
-The interaction/item/inventory slice is documented in README.md. Use E for interaction, I for player inventory, and click stacks for chest transfers. The version-specific details below describe the earlier v0.0.0.5 movement handoff.
+The interaction/item/inventory slice is documented in README.md. Use E for interaction, I for player inventory, and drag/click-then-place to arrange stacks and double-click for chest transfers. The version-specific details below describe the earlier v0.0.0.5 movement handoff.
 
 ## Project goal
 

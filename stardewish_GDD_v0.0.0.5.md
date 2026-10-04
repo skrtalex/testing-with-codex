@@ -7,7 +7,7 @@
 
 ## v0.0.0.6 update
 
-The prototype now includes generic E interaction, shaking fruit trees, scattered world pickups, a configurable player inventory (16 slots by default), and a fixed 32-slot test chest. I opens player inventory; click stacks to transfer when the chest is open. Item data and drop settings are documented in README.md. Inventory and chest contents persist only during the current run.
+The prototype now includes generic E interaction, shaking fruit trees, scattered world pickups, a configurable player inventory (16 slots by default), and a fixed 32-slot test chest. I opens player inventory; drag or click-then-place to arrange stacks, and double-click to transfer when the chest is open. Item data and drop settings are documented in README.md. Inventory and chest contents persist only during the current run.
 
 The v0.0.0.5 design history below remains useful for movement and presentation. Interaction and basic inventory are now implemented; larger systems remain out of scope.
 
