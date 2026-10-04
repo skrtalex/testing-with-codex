@@ -5,8 +5,7 @@ const BUSH_TEXTURE := preload("res://assets/terrain/bush_tile.png")
 const ROCK_TEXTURE := preload("res://assets/terrain/rock_tile.png")
 
 const HUD_MARGIN := 18.0
-const TOP_LEFT_SIZE := Vector2(314.0, 182.0)
-const BOTTOM_SIZE := Vector2(760.0, 36.0)
+const BOTTOM_SIZE := Vector2(600.0, 28.0)
 const VERSION_SIZE := Vector2(240.0, 26.0)
 
 var config: Dictionary = {}
@@ -107,7 +106,8 @@ func _update_layout() -> void:
     scale = Vector2.ONE * world_scale
     position = (viewport_size - (MAP_SIZE * world_scale)) * 0.5
 
-    var ui_scale := clampf(world_scale, 0.85, 1.55)
+    # Keep screen-space diagnostics compact instead of scaling them with the world.
+    var ui_scale := clampf(minf(viewport_size.x / MAP_SIZE.x, viewport_size.y / MAP_SIZE.y), 0.8, 1.15)
     top_left_hud.scale = Vector2.ONE * ui_scale
     top_left_hud.position = Vector2(HUD_MARGIN, HUD_MARGIN)
 
@@ -162,10 +162,8 @@ func _build_test_area() -> void:
     _add_solid_rect(Rect2(585, 420, 22, 110), "Wall")
     _add_solid_rect(Rect2(810, 520, 95, 20), "Wall")
 
-    # A few explicit 3/4 decorative objects to sell the new angle.
-    _add_boulder(Vector2(720, 180), 18.0)
+    # A decorative bush remains inside the mixed obstacle course.
     _add_bush(Vector2(780, 470), Vector2(26.0, 18.0))
-    _add_facade(Vector2(780, 120), Vector2(110.0, 62.0))
 
 func _set_y_sort(node: Node2D, sort_y: float) -> void:
     node.z_index = int(round(sort_y))
@@ -286,42 +284,6 @@ func _add_canopy_blob(parent: Node, offset: Vector2, radius: float, color: Color
     blob.color = color
     parent.add_child(blob)
 
-func _add_boulder(pos: Vector2, radius: float) -> void:
-    var node := Node2D.new()
-    node.position = pos
-    _set_y_sort(node, pos.y)
-
-    var shadow := Polygon2D.new()
-    shadow.polygon = _ellipse_polygon(radius * 1.0, radius * 0.42, 18)
-    shadow.position = Vector2(4.0, radius * 0.8)
-    shadow.color = Color(0, 0, 0, 0.18)
-    shadow.z_index = -2
-    node.add_child(shadow)
-
-    var rock := Polygon2D.new()
-    rock.polygon = PackedVector2Array([
-        Vector2(-radius * 0.9, radius * 0.1),
-        Vector2(-radius * 0.55, -radius * 0.7),
-        Vector2(radius * 0.25, -radius * 0.9),
-        Vector2(radius * 0.85, -radius * 0.2),
-        Vector2(radius * 0.75, radius * 0.65),
-        Vector2(-radius * 0.25, radius * 0.85)
-    ])
-    rock.color = Color("8f8b87")
-    node.add_child(rock)
-
-    var highlight := Polygon2D.new()
-    highlight.polygon = PackedVector2Array([
-        Vector2(-radius * 0.4, -radius * 0.35),
-        Vector2(radius * 0.1, -radius * 0.55),
-        Vector2(radius * 0.2, -radius * 0.1),
-        Vector2(-radius * 0.2, 0.0)
-    ])
-    highlight.color = Color("b6b3af")
-    node.add_child(highlight)
-
-    add_child(node)
-
 func _add_bush(pos: Vector2, size: Vector2) -> void:
     var node := Node2D.new()
     node.position = pos
@@ -340,50 +302,12 @@ func _add_bush(pos: Vector2, size: Vector2) -> void:
 
     add_child(node)
 
-func _add_facade(pos: Vector2, size: Vector2) -> void:
-    var node := Node2D.new()
-    node.position = pos
-    _set_y_sort(node, pos.y + size.y)
-
-    var shadow := Polygon2D.new()
-    shadow.polygon = _ellipse_polygon(size.x * 0.48, 10.0, 20)
-    shadow.position = Vector2(8.0, size.y * 0.55 + 12.0)
-    shadow.color = Color(0, 0, 0, 0.16)
-    shadow.z_index = -2
-    node.add_child(shadow)
-
-    var wall := Polygon2D.new()
-    wall.polygon = PackedVector2Array([
-        Vector2(-size.x * 0.5, -size.y * 0.5), Vector2(size.x * 0.5, -size.y * 0.5),
-        Vector2(size.x * 0.5, size.y * 0.5), Vector2(-size.x * 0.5, size.y * 0.5)
-    ])
-    wall.color = Color("cab9a1")
-    node.add_child(wall)
-
-    var roof := Polygon2D.new()
-    roof.polygon = PackedVector2Array([
-        Vector2(-size.x * 0.55, -size.y * 0.5), Vector2(size.x * 0.55, -size.y * 0.5),
-        Vector2(size.x * 0.43, -size.y * 0.72), Vector2(-size.x * 0.43, -size.y * 0.72)
-    ])
-    roof.color = Color("b86d43")
-    node.add_child(roof)
-
-    var door := Polygon2D.new()
-    var door_w := size.x * 0.24
-    var door_h := size.y * 0.58
-    door.polygon = PackedVector2Array([
-        Vector2(-door_w * 0.5, size.y * 0.5), Vector2(door_w * 0.5, size.y * 0.5),
-        Vector2(door_w * 0.5, size.y * 0.5 - door_h), Vector2(-door_w * 0.5, size.y * 0.5 - door_h)
-    ])
-    door.color = Color("7b4d31")
-    node.add_child(door)
-
-    add_child(node)
-
 func _add_terrain_rect(rect: Rect2, terrain_name: String) -> void:
     var area := Area2D.new()
     area.name = "%sTerrain" % terrain_name.capitalize()
-    area.z_index = -5
+    # At z = -5 these polygons rendered behind Main's opaque background draw.
+    # z = 0 keeps them above the background and below y-sorted world objects.
+    area.z_index = 0
     area.collision_layer = 2
     area.collision_mask = 0
     area.position = rect.get_center()
@@ -477,8 +401,6 @@ func _draw() -> void:
     _draw_zone_label(Vector2(90, 255), "BUSHES - 75% SPEED")
     _draw_zone_label(Vector2(620, 255), "ROCKS - 55% SPEED")
     _draw_zone_label(Vector2(70, 415), "MIXED OBSTACLE COURSE")
-    _draw_zone_label(Vector2(700, 85), "3/4 FACADE TEST")
-
     draw_dashed_line(Vector2(370, 322), Vector2(590, 322), Color(1, 1, 1, 0.55), 2.0, 10.0)
 
 func _draw_zone_label(pos: Vector2, text: String) -> void:
