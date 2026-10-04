@@ -253,9 +253,9 @@ Notably:
 - v0.0.0.4 was reported to look good and be a clear improvement.
 - v0.0.0.5 added the Lexlom animated sprite/skin system.
 
-The environment that produced these builds did **not** have Godot available to launch the project itself. Therefore the user's local Godot run is the runtime source of truth.
+Historical context: the environment that produced these builds did not have Godot available. That limitation applied only to that environment and does not restrict current Codex sessions. Follow [AGENTS.md](AGENTS.md) for the installed executable and required technical validation. Attempt Godot validation before reporting it unavailable; report actual failures and request execution permission if needed.
 
-When continuing in Codex, the first job should be to run v0.0.0.5 and fix any parser/runtime/import issue before adding new features.
+When continuing in Codex, run the current checkout through the headless editor and runtime checks in [AGENTS.md](AGENTS.md), and fix any parser/runtime/import issues before adding new features. Visual appearance and game feel still require interactive playtesting or suitable automated tests.
 
 ## Historical issue worth knowing
 

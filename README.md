@@ -29,6 +29,10 @@ A tiny Godot 4.x prototype focused on movement feel, stamina, terrain, 3/4 prese
 3. Click **Import** and select this folder's `project.godot`.
 4. Open the project and press **F6/F5** (Play).
 
+## Technical validation in Codex
+
+Follow [AGENTS.md](AGENTS.md) for the configured Godot executable and headless editor/runtime checks. Run technical validation when relevant and report actual results. Earlier handoff and patch notes describe historical environments; they do not prohibit running Godot in the current environment. Visual appearance and game feel require interactive playtesting or suitable automated tests.
+
 ## Controls
 
 - **WASD** — walk
