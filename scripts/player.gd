@@ -36,6 +36,8 @@ var sprite_offset_y := -8.0
 var infinite_stamina := false
 var current_skin := 0
 
+var inventory_open := false
+
 var last_facing := Vector2.DOWN
 var dash_direction := Vector2.ZERO
 var dash_time_left := 0.0
@@ -122,7 +124,12 @@ func _physics_process(delta: float) -> void:
     dash_cooldown_left = maxf(0.0, dash_cooldown_left - delta)
     regen_delay_left = maxf(0.0, regen_delay_left - delta)
 
-    if dash_time_left > 0.0:
+    if inventory_open:
+        velocity = Vector2.ZERO
+        dash_time_left = 0.0
+        _set_visual_state("Idle")
+        _report_movement_state("Idle", 0.0)
+    elif dash_time_left > 0.0:
         _process_dash(delta)
     else:
         _process_normal_movement(delta)
@@ -197,6 +204,8 @@ func _process_dash(delta: float) -> void:
         velocity = Vector2.ZERO
 
 func _try_dash() -> void:
+    if inventory_open:
+        return
     if dash_time_left > 0.0 or dash_cooldown_left > 0.0:
         return
 
