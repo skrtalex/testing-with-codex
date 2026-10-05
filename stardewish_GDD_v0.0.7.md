@@ -1,15 +1,17 @@
+Current project version: **0.0.7**. The current UI/testing-area behavior is described in README.md; the older design and implementation notes below remain background history.
+
 # Stardew-ish Project â€” Living GDD
 
-**Current prototype version:** v0.0.0.6
+**Current prototype version:** v0.0.7
 **Engine:** Godot 4.x  
 **Scripting:** GDScript  
 **Current phase:** movement / interaction / item-inventory prototype
 
-## v0.0.0.6 update
+## v0.0.7 update
 
 The prototype now includes generic E interaction, shaking fruit trees, scattered world pickups, a configurable player inventory (16 slots by default), and a 32-slot small chest and a 64-slot large chest with supplied open/closed sprites. Bush slow terrain now consists of individual directional sprites with small base footprints. I opens player inventory; drag or click-then-place to arrange stacks, and double-click to transfer when the chest is open. Item data and drop settings are documented in README.md. Inventory and chest contents persist only during the current run.
 
-The v0.0.0.5 design history below remains useful for movement and presentation. Interaction and basic inventory are now implemented; larger systems remain out of scope.
+The v0.0.7 design history below remains useful for movement and presentation. Interaction and basic inventory are now implemented; larger systems remain out of scope.
 
 ## 1. High-level concept
 
@@ -251,7 +253,7 @@ It is not intended to be a final map.
 
 ## 13. Near-term development priorities
 
-Recommended order after verifying v0.0.0.5:
+Recommended order after verifying v0.0.7:
 
 1. **Verify and tune the new character animation**
    - walk rate
@@ -279,7 +281,7 @@ Recommended order after verifying v0.0.0.5:
    - likely an interact action near/facing an object
    - signs, boxes, doors, NPC placeholders, etc.
 
-The basic inventory/chest slice is implemented in v0.0.0.6. Further expansion into tools, farming, NPCs, quests, time, save data, or progression remains deferred until the current flow feels stable.
+The basic inventory/chest slice is implemented in v0.0.7. Further expansion into tools, farming, NPCs, quests, time, save data, or progression remains deferred until the current flow feels stable.
 
 ## 14. Explicitly out of scope right now
 

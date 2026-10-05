@@ -63,14 +63,14 @@ func run() -> void:
     await create_timer(0.3).timeout
     await capture("fruit_on_ground")
     # Walk over one drop, exercising the same proximity pickup path as gameplay.
-    var drops: Array = main.get_children().filter(func(n): return n is WorldPickup)
+    var drops: Array = main.area_root.get_children().filter(func(n): return n is WorldPickup)
     if not drops.is_empty():
         player.position = drops[0].position
     await create_timer(0.8).timeout
     await key(KEY_I)
     await capture("player_inventory")
     await key(KEY_I)
-    var chest := main.get_node("TestChest") as TestChest
+    var chest := main.area_root.get_node("TestChest") as TestChest
     player.position = chest.position + Vector2(36, 0)
     player.last_facing = Vector2.LEFT
     await physics_frame
@@ -158,7 +158,7 @@ func run() -> void:
     root.size = Vector2i(960, 600)
     player.position = Vector2(480, 340)
     await capture("map_chests_bushes")
-    var cactus := main.get_node("FruitPlant_dragonfruit") as FruitBush
+    var cactus := main.area_root.get_node("FruitPlant_dragonfruit") as FruitBush
     player.position = cactus.position + Vector2(0, 31)
     player.last_facing = Vector2.UP
     await physics_frame
@@ -167,7 +167,7 @@ func run() -> void:
     await capture("cactus_harvesting")
     await create_timer(0.3).timeout
     await capture("fruit_garden_drops")
-    var dragon_drops: Array = main.get_children().filter(func(n): return n is WorldPickup and n.item_id == "dragonfruit")
+    var dragon_drops: Array = main.area_root.get_children().filter(func(n): return n is WorldPickup and n.item_id == "dragonfruit")
     if dragon_drops.is_empty():
         push_error("Visual smoke: cactus did not create dragon-fruit pickups")
         quit(1)
@@ -182,7 +182,7 @@ func run() -> void:
         push_error("Visual smoke: dragon-fruit pickup failed")
         quit(1)
         return
-    var large := main.get_node("LargeChest") as TestChest
+    var large := main.area_root.get_node("LargeChest") as TestChest
     player.position = large.position + Vector2(-36, 0)
     player.last_facing = Vector2.RIGHT
     await physics_frame

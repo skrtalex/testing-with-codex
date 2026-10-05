@@ -1,10 +1,20 @@
+# v0.0.7 — UI and testing scenes
+
+- Added a paused test menu with debug commands, keybinds and area selection.
+- Added one-second command toasts beneath stamina, optional diagnostics and footprint overlays.
+- Added a persistent second test area for future cooking/combat work, linked by matching top/bottom openings.
+- Preserved the merged movement tuning and made map terrain labels follow configured speeds.
+- Updated project version and document names to 0.0.7.
+
+Current project version: **0.0.7**. The current UI/testing-area behavior is described in README.md; the older design and implementation notes below remain background history.
+
 Asset overhaul, iteration 1: added five supplied sprites, fruiting bushes/shrubs and a placeholder dragon-fruit cactus in the top-right garden, shared harvest behavior with trees, dense continuous pebble patches, chests inside the storage building, and terrain asset subfolders.
 
 Graphics update: supplied open/closed chest sprites replace procedural chest drawing; added an independent 64-slot large chest and scrolling transfer grid. Individual directional sprite bushes with configurable base slow footprints replace tiled bush strips.
 
 Inventory control update: drag or click-then-place to move, merge, and swap within or between inventories. Double-click quick-transfers while a chest is open. Cancelled drops and partial merges preserve remaining items.
 
-# v0.0.0.6 — Interaction, fruit drops, inventory and chest
+# Earlier interaction, fruit drops, inventory and chest work
 
 - Added shared interaction, item catalog, inventory stack, world pickup, tree drop, and chest transfer scripts.
 - Every existing tree shakes its canopy and scatters a configurable random quantity of an assigned fruit. Cooldown prevents repeated spawning; trunk collision remains unchanged.
@@ -13,7 +23,7 @@ Inventory control update: drag or click-then-place to move, merge, and swap with
 - Added I inventory controls and drag-and-drop, click-then-place, and double-click quick transfer in both directions. Partial additions retain excess fruit/stacks at their source.
 - Added headless integration tests and a rendered key/mouse smoke test; human game-feel review remains required.
 
-The v0.0.0.5 notes below are retained as release history.
+The notes below are retained as development history.
 
 # Patch Notes / Development History
 
@@ -147,7 +157,7 @@ This confirmed the chosen visual direction:
 
 ---
 
-## v0.0.0.5 â€” Animated player sprites + skin switching
+## v0.0.7 â€” Animated player sprites + skin switching
 
 ### Source asset
 Lexlom 32-character pixel-art pack:
@@ -199,7 +209,7 @@ At the time of this release, the producing environment could inspect files but c
 
 # Current build summary
 
-**Latest:** v0.0.0.6
+**Latest:** v0.0.7
 
 Controls:
 
