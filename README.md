@@ -8,7 +8,7 @@ A tiny Godot 4.x prototype focused on movement feel, stamina, terrain, 3/4 prese
 - Trees shake and scatter 1–3 fruit by default, with a 3-second cooldown. Each tree keeps its assigned fruit for the run.
 - Walk over drops to collect them. Pickups wait briefly after spawning, and full inventories leave excess fruit in the world.
 - Press **I** for the 16-slot player inventory. Drag a stack onto a slot, or click a stack then a destination, to move, merge, or swap it.
-- The small test chest right of the starting position has **32 slots**; the large chest on the left has **64 slots**. Each is prefilled with six fruit stacks. Press E to open both inventories; double-click a stack to transfer as much as the destination accepts. Dragging or click-then-place allows precise placement, merging, and swapping within either inventory or between them.
+- Both chests are inside the top-middle storage building: the small chest on the left has **32 slots**, and the large chest on the right has **64 slots**. Each is prefilled with six fruit stacks. Press E to open both inventories; double-click a stack to transfer as much as the destination accepts. Dragging or click-then-place allows precise placement, merging, and swapping within either inventory or between them.
 - **I / Esc** closes the inventory; **E** also closes the chest. Movement and pickup pause while a panel is open. Chest contents persist during the run; no save system is added.
 
 ## Included
@@ -159,6 +159,27 @@ Rendered tests exercise double-click transfer both ways, dragging within the che
 
 Small chest: `box.png` when closed, `box-open.png` while its transfer UI is open. Large chest: `box-large.png` / `box-large-open.png`. Closing with I, E, Esc, or the Close button restores the closed sprite. Both have footprint collision and preserve independent contents during the run. The large chest's 64-slot grid scrolls vertically so slots stay readable on small windows; drag/drop, click-to-place, and double-click transfers work in both chests.
 
-Eleven individual walkable bushes replace the old bush-tile strips and procedural decorative bush. They cycle through all four `plant_bush_NE/NW/SE/SW.png` textures, with transparent export padding excluded using Sprite2D texture regions. The PNGs remain unchanged. Slowing applies only in each bush's small elliptical footprint near its base; gaps between bushes are normal terrain. Rock strips remain unchanged.
+Eleven individual walkable bushes replace the old bush-tile strips and procedural decorative bush. They cycle through all four `plant_bush_NE/NW/SE/SW.png` textures, with transparent export padding excluded using Sprite2D texture regions. The PNGs remain unchanged. Slowing applies only in each bush's small elliptical footprint near its base; gaps between bushes are normal terrain. Rock strips now use dense pebble sprite fields with one continuous 55%-speed footprint per patch.
 
-Tune `terrain.bush.display_width`, `slow_half_width`, `slow_half_height`, `slow_offset_y`, and `movement_multiplier` in `data/game_config.json`. `SlowBush` uses the existing terrain detector/overlap system, preserving slowest-overlap behavior and Y sorting from each bush's ground position. `bush_tile.png` remains in the repository as an unused asset; runtime code no longer loads it.
+Tune `terrain.bush.display_width`, `slow_half_width`, `slow_half_height`, `slow_offset_y`, and `movement_multiplier` in `data/game_config.json`. `SlowBush` uses the existing terrain detector/overlap system, preserving slowest-overlap behavior and Y sorting from each bush's ground position. `ground/bush_tile.png` remains in the repository as an unused asset; runtime code no longer loads it.
+
+## Asset overhaul — first iteration
+
+The top-right garden contains six fruiting plants: bush1 -> blackberry; bush2 -> red/purple raspberry; shrub -> goldenberry with bare/husked variants; cactus -> dragon fruit. The upright cactus is placeholder artwork for a future climbing dragon-fruit cactus. Strawberries and other ground/vine crops are not part of this bush pass. Existing decorative slowing bushes remain separate from harvestable plants.
+
+E uses the existing generic interaction detector. `HarvestablePlant` shares shake, cooldown, randomized quantity, and scattering between `FruitTree` and `FruitBush`; drops remain generic world pickups. Each configured garden plant keeps one item ID for the run. `plant_drops.plants` controls texture, item, position, and display size; the same section controls min/max drop quantity, cooldown, scatter, and shake. Fruiting plants remain walkable and have a small slowing footprint.
+
+`PebblePatch` renders dense, staggered, slightly jittered pebble clusters inside each former rock patch. The whole patch slows movement continuously to avoid speed flicker between small sprites. Configurable `terrain.rocks` values include pebble width, spacing, jitter, and a layout seed. Both pebble fields are walkable; neither creates solid collision. Leaving a field restores normal terrain speed unless another slowing terrain overlaps.
+
+Terrain runtime assets are organized as:
+
+```text
+assets/terrain/
+  ground/                 retained, currently unused bush/rock tiles
+  plants/decorative/      four directional slowing-plant sprites
+  plants/fruiting/        bush1, bush2, shrub
+  plants/cacti/           placeholder cactus
+  rocks/                 pebbles
+```
+
+Import metadata moves with assets, with texture paths updated. The source library under `assets/source/` is unchanged. Original supplied PNG pixels are preserved. The storage doorway and central aisle stay clear; approach the small chest from the aisle to its right and the large chest from the aisle to its left.

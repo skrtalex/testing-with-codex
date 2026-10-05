@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c32mfr0egdwa5"
-path="res://.godot/imported/plant_bush_NE.png-9ebc16a417a452ea0289dd691fd62217.ctex"
+uid="uid://bjnkb86p3jbe1"
+path="res://.godot/imported/rock_tile.png-73db5f1f49b66995f67dee6a6306d816.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/terrain/plant_bush_NE.png"
-dest_files=["res://.godot/imported/plant_bush_NE.png-9ebc16a417a452ea0289dd691fd62217.ctex"]
+source_file="res://assets/terrain/ground/rock_tile.png"
+dest_files=["res://.godot/imported/rock_tile.png-73db5f1f49b66995f67dee6a6306d816.ctex"]
 
 [params]
 

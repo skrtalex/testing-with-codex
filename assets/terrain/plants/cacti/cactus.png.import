@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bjnkb86p3jbe1"
-path="res://.godot/imported/rock_tile.png-8d6fcf46578943ad006f61fd1a03db9a.ctex"
+uid="uid://dkndwuokfvp7i"
+path="res://.godot/imported/cactus.png-0bf1b2651f29be9ab4a808cf9b6e8871.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/terrain/rock_tile.png"
-dest_files=["res://.godot/imported/rock_tile.png-8d6fcf46578943ad006f61fd1a03db9a.ctex"]
+source_file="res://assets/terrain/plants/cacti/cactus.png"
+dest_files=["res://.godot/imported/cactus.png-0bf1b2651f29be9ab4a808cf9b6e8871.ctex"]
 
 [params]
 

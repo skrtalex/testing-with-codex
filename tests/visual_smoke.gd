@@ -71,8 +71,8 @@ func run() -> void:
     await capture("player_inventory")
     await key(KEY_I)
     var chest := main.get_node("TestChest") as TestChest
-    player.position = chest.position + Vector2(0, 35)
-    player.last_facing = Vector2.UP
+    player.position = chest.position + Vector2(36, 0)
+    player.last_facing = Vector2.LEFT
     await physics_frame
     await key(KEY_E)
     await capture("chest_open")
@@ -158,9 +158,33 @@ func run() -> void:
     root.size = Vector2i(960, 600)
     player.position = Vector2(480, 340)
     await capture("map_chests_bushes")
-    var large := main.get_node("LargeChest") as TestChest
-    player.position = large.position + Vector2(0, 36)
+    var cactus := main.get_node("FruitPlant_dragonfruit") as FruitBush
+    player.position = cactus.position + Vector2(0, 31)
     player.last_facing = Vector2.UP
+    await physics_frame
+    await key(KEY_E)
+    await create_timer(0.1).timeout
+    await capture("cactus_harvesting")
+    await create_timer(0.3).timeout
+    await capture("fruit_garden_drops")
+    var dragon_drops: Array = main.get_children().filter(func(n): return n is WorldPickup and n.item_id == "dragonfruit")
+    if dragon_drops.is_empty():
+        push_error("Visual smoke: cactus did not create dragon-fruit pickups")
+        quit(1)
+        return
+    player.position = dragon_drops[0].position
+    await create_timer(0.8).timeout
+    var collected_dragon := false
+    for i in range(main.inventory.size()):
+        if main.inventory.slot(i).get("item_id", "") == "dragonfruit":
+            collected_dragon = true
+    if not collected_dragon:
+        push_error("Visual smoke: dragon-fruit pickup failed")
+        quit(1)
+        return
+    var large := main.get_node("LargeChest") as TestChest
+    player.position = large.position + Vector2(-36, 0)
+    player.last_facing = Vector2.RIGHT
     await physics_frame
     await key(KEY_E)
     if not large.is_open or main.inventory_ui.chest_inventory != large.inventory:

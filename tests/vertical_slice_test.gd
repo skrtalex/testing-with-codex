@@ -104,8 +104,8 @@ func run() -> void:
     var large := main.get_node("LargeChest") as TestChest
     check(large.inventory.size() == 64, "exactly 64 large chest slots")
     check(large.sprite.texture.resource_path.ends_with("/box-large.png"), "large chest closed sprite")
-    player.position = chest.position + Vector2(0, 35)
-    player.last_facing = Vector2.UP
+    player.position = chest.position + Vector2(36, 0)
+    player.last_facing = Vector2.LEFT
     await physics_frame
     check(detector.closest_target() == chest, "chest selected through common detector")
     detector.try_interact()
@@ -158,6 +158,57 @@ func run() -> void:
         check(bush.collision_layer == 2, "bush has no solid collision layer")
         check(bush.sprite.region_rect.size.x < 512 and bush.sprite.region_rect.size.x > 0, "transparent padding excluded")
     check(directions.size() == 4, "all four bush directions used")
+    var plants := get_nodes_in_group("fruit_plants")
+    check(plants.size() == 6, "six configured fruiting plants")
+    var expected_fruit_ids := ["blackberry", "raspberry1", "raspberry2", "goldenberry", "goldenberry2", "dragonfruit"]
+    player.position = Vector2(480, 340)
+    player.velocity = Vector2.ZERO
+    player.dash_time_left = 0
+    # The central doorway and aisle must remain accessible after moving chests.
+    for waypoint in [Vector2(446, 220), Vector2(446, 174)]:
+        var hit := player.move_and_collide(waypoint - player.position)
+        check(hit == null, "building entrance/aisle unobstructed")
+    for plant in plants:
+        check(plant.drop_item_id in expected_fruit_ids, "plant fruit mapping")
+        check(plant.collision_layer == 0, "fruit plant is walkable")
+        player.position = plant.position + Vector2(0, 31)
+        player.last_facing = Vector2.UP
+        await physics_frame
+        check(detector.closest_target() == plant, "fruit plant found by generic detector")
+        var observed: Array = []
+        var recorder := func(id, quantity, pos): observed.append({"id": id, "quantity": quantity, "position": pos})
+        plant.drop_requested.connect(recorder)
+        detector.try_interact()
+        check(not plant.can_interact(player), "plant cooldown starts")
+        detector.try_interact()
+        await create_timer(0.4).timeout
+        check(observed.size() >= 1 and observed.size() <= 3, "plant randomized drop count")
+        for drop in observed:
+            check(drop["id"] == plant.drop_item_id, "plant keeps assigned fruit")
+            check(drop["position"].distance_to(plant.position + plant.drop_offset) <= 18.1, "plant drop scatter")
+        plant.drop_requested.disconnect(recorder)
+        check(is_zero_approx(plant.sprite.position.x), "plant shake restores origin")
+    var patches := get_nodes_in_group("pebble_patches")
+    check(patches.size() == 2, "both rock strips replaced with pebble patches")
+    for patch in patches:
+        var cluster_count := 0
+        for child in patch.get_children():
+            if child is Sprite2D:
+                cluster_count += 1
+        check(cluster_count > 8, "pebbles form dense clusters")
+        check(patch.collision_layer == 2, "pebble patch is walkable slow terrain")
+    player.terrain_overlaps.clear()
+    player._recalculate_terrain()
+    player.position = patches[0].position
+    await physics_frame
+    await physics_frame
+    await physics_frame
+    check(is_equal_approx(player.terrain_multiplier, 0.55), "pebble area slows to 55 percent")
+    player.position = Vector2(390, 340)
+    await physics_frame
+    await physics_frame
+    await physics_frame
+    check(is_equal_approx(player.terrain_multiplier, 1.0), "leaving pebble area restores speed")
     player.dash_time_left = 0
     player.velocity = Vector2.ZERO
     player.terrain_overlaps.clear()
