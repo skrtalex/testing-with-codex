@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dhf8jcmn1bp78"
-path="res://.godot/imported/plant_bush_SW.png-c12db90ea93ecf09139c26c2f4e0c3e4.ctex"
+uid="uid://biwckjbfmwjil"
+path="res://.godot/imported/plant_bush_NW.png-0ba96248be3c2f26f49177b84b606b7e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/terrain/plant_bush_SW.png"
-dest_files=["res://.godot/imported/plant_bush_SW.png-c12db90ea93ecf09139c26c2f4e0c3e4.ctex"]
+source_file="res://assets/terrain/plants/decorative/plant_bush_NW.png"
+dest_files=["res://.godot/imported/plant_bush_NW.png-0ba96248be3c2f26f49177b84b606b7e.ctex"]
 
 [params]
 

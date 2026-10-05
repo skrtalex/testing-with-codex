@@ -34,10 +34,19 @@
       "movement_multiplier": 1.0
     },
     "bush": {
-      "movement_multiplier": 0.75
+      "movement_multiplier": 0.75,
+      "display_width": 34,
+      "slow_half_width": 17,
+      "slow_half_height": 10,
+      "slow_offset_y": -4,
+      "harvest_plant_radius": 15
     },
     "rocks": {
-      "movement_multiplier": 0.55
+      "movement_multiplier": 0.55,
+      "pebble_width": 26,
+      "spacing": 21,
+      "jitter": 2,
+      "layout_seed": 6006
     }
   },
   "debug": {
@@ -83,5 +92,69 @@
     "scatter_radius": 22.0,
     "shake_seconds": 0.32,
     "shake_pixels": 4.0
+  },
+  "plant_drops": {
+    "min_drop": 1,
+    "max_drop": 3,
+    "cooldown_seconds": 3.0,
+    "scatter_radius": 18.0,
+    "shake_seconds": 0.3,
+    "shake_pixels": 3.0,
+    "plants": [
+      {
+        "item_id": "blackberry",
+        "texture": "res://assets/terrain/plants/fruiting/bush1.png",
+        "position": [
+          650,
+          117
+        ],
+        "display_width": 40
+      },
+      {
+        "item_id": "raspberry1",
+        "texture": "res://assets/terrain/plants/fruiting/bush2.png",
+        "position": [
+          747,
+          117
+        ],
+        "display_width": 40
+      },
+      {
+        "item_id": "raspberry2",
+        "texture": "res://assets/terrain/plants/fruiting/bush2.png",
+        "position": [
+          845,
+          117
+        ],
+        "display_width": 40
+      },
+      {
+        "item_id": "goldenberry",
+        "texture": "res://assets/terrain/plants/fruiting/shrub.png",
+        "position": [
+          650,
+          199
+        ],
+        "display_width": 40
+      },
+      {
+        "item_id": "goldenberry2",
+        "texture": "res://assets/terrain/plants/fruiting/shrub.png",
+        "position": [
+          747,
+          199
+        ],
+        "display_width": 40
+      },
+      {
+        "item_id": "dragonfruit",
+        "texture": "res://assets/terrain/plants/cacti/cactus.png",
+        "position": [
+          845,
+          199
+        ],
+        "display_width": 30
+      }
+    ]
   }
 }

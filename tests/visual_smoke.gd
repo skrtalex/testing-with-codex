@@ -71,8 +71,8 @@ func run() -> void:
     await capture("player_inventory")
     await key(KEY_I)
     var chest := main.get_node("TestChest") as TestChest
-    player.position = chest.position + Vector2(0, 35)
-    player.last_facing = Vector2.UP
+    player.position = chest.position + Vector2(36, 0)
+    player.last_facing = Vector2.LEFT
     await physics_frame
     await key(KEY_E)
     await capture("chest_open")
@@ -153,6 +153,60 @@ func run() -> void:
     await drag(main.inventory_ui.slot_buttons[3], main.inventory_ui.slot_buttons[4].get_global_rect().get_center(), true)
     if main.inventory_ui.is_open or main.inventory.slot(3).get("item_id", "") != "pear" or not main.inventory.slot(4).is_empty():
         push_error("Visual smoke: closing during drag moved items")
+        quit(1)
+        return
+    root.size = Vector2i(960, 600)
+    player.position = Vector2(480, 340)
+    await capture("map_chests_bushes")
+    var cactus := main.get_node("FruitPlant_dragonfruit") as FruitBush
+    player.position = cactus.position + Vector2(0, 31)
+    player.last_facing = Vector2.UP
+    await physics_frame
+    await key(KEY_E)
+    await create_timer(0.1).timeout
+    await capture("cactus_harvesting")
+    await create_timer(0.3).timeout
+    await capture("fruit_garden_drops")
+    var dragon_drops: Array = main.get_children().filter(func(n): return n is WorldPickup and n.item_id == "dragonfruit")
+    if dragon_drops.is_empty():
+        push_error("Visual smoke: cactus did not create dragon-fruit pickups")
+        quit(1)
+        return
+    player.position = dragon_drops[0].position
+    await create_timer(0.8).timeout
+    var collected_dragon := false
+    for i in range(main.inventory.size()):
+        if main.inventory.slot(i).get("item_id", "") == "dragonfruit":
+            collected_dragon = true
+    if not collected_dragon:
+        push_error("Visual smoke: dragon-fruit pickup failed")
+        quit(1)
+        return
+    var large := main.get_node("LargeChest") as TestChest
+    player.position = large.position + Vector2(-36, 0)
+    player.last_facing = Vector2.RIGHT
+    await physics_frame
+    await key(KEY_E)
+    if not large.is_open or main.inventory_ui.chest_inventory != large.inventory:
+        push_error("Visual smoke: large chest did not open")
+        quit(1)
+        return
+    await capture("large_chest_64_slots")
+    large.inventory.move_stack(0, 63)
+    var scroll := main.inventory_ui.content.get_child(5) as ScrollContainer
+    scroll.scroll_vertical = 999
+    await capture("large_chest_scrolled")
+    await click(main.inventory_ui.slot_buttons[79])
+    await click(main.inventory_ui.slot_buttons[79], true)
+    if not large.inventory.slot(63).is_empty():
+        push_error("Visual smoke: bottom large-chest slot transfer failed")
+        quit(1)
+        return
+    root.size = Vector2i(640, 480)
+    await capture("large_chest_small_window")
+    await key(KEY_ESCAPE)
+    if large.is_open:
+        push_error("Visual smoke: large chest lid stayed open")
         quit(1)
         return
     print("RENDERED INPUT SMOKE: PASS")
