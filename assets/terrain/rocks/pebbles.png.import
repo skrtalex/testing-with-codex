@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bg21fkikj1ljy"
-path="res://.godot/imported/plant_bush_SE.png-b5eff20e93eaad68d20268e38c8a3804.ctex"
+uid="uid://b64i3appnw1n3"
+path="res://.godot/imported/pebbles.png-1fac05fcae36f52a7b6f4e3b38539385.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/terrain/plant_bush_SE.png"
-dest_files=["res://.godot/imported/plant_bush_SE.png-b5eff20e93eaad68d20268e38c8a3804.ctex"]
+source_file="res://assets/terrain/rocks/pebbles.png"
+dest_files=["res://.godot/imported/pebbles.png-1fac05fcae36f52a7b6f4e3b38539385.ctex"]
 
 [params]
 
