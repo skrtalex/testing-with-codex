@@ -1,5 +1,5 @@
 {
-  "balance_version": "0.0.0.6",
+  "balance_version": "0.0.7",
   "player": {
     "base_stats": {
       "max_stamina": 100.0

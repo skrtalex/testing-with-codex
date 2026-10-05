@@ -59,7 +59,7 @@ func run() -> void:
     root.add_child(main)
     await process_frame
     await physics_frame
-    check(main.config["balance_version"] == "0.0.0.6", "version bumped")
+    check(main.config["balance_version"] == "0.0.7", "version bumped")
     var trees := get_nodes_in_group("interactables").filter(func(n): return n is FruitTree)
     check(trees.size() == 11, "all existing trees interactable")
     var tree := trees[8] as FruitTree
@@ -84,7 +84,7 @@ func run() -> void:
     check(drop_count[0] >= 1 and drop_count[0] <= 3, "random configured drop range")
     check(is_zero_approx(tree.get_node("Canopy").position.x), "shake returns canopy to origin")
     check(tree.get_node("CollisionShape2D").shape.size == Vector2(14, 18), "trunk collision preserved")
-    var drops := main.get_children().filter(func(n): return n is WorldPickup)
+    var drops: Array = main.area_root.get_children().filter(func(n): return n is WorldPickup)
     check(drops.size() == drop_count[0], "drops exist as world objects")
     if not drops.is_empty():
         var pickup := drops[0] as WorldPickup
@@ -98,10 +98,10 @@ func run() -> void:
         check(pickup.try_pickup() == 0 and pickup.quantity == 2, "full inventory cannot destroy pickup")
         full.remove_items(0, 20)
         check(pickup.try_pickup() == 2 and pickup.is_queued_for_deletion(), "successful pickup removes world object")
-    var chest := main.get_node("TestChest") as TestChest
+    var chest := main.area_root.get_node("TestChest") as TestChest
     check(chest.inventory.size() == 32, "exactly 32 chest slots")
     check(chest.sprite.texture.resource_path.ends_with("/box.png"), "small chest closed sprite")
-    var large := main.get_node("LargeChest") as TestChest
+    var large := main.area_root.get_node("LargeChest") as TestChest
     check(large.inventory.size() == 64, "exactly 64 large chest slots")
     check(large.sprite.texture.resource_path.ends_with("/box-large.png"), "large chest closed sprite")
     player.position = chest.position + Vector2(36, 0)
@@ -148,8 +148,8 @@ func run() -> void:
     player.dash_cooldown_left = 0
     player._try_dash()
     check(player.dash_time_left > 0 and player.stamina == player.max_stamina - player.dash_cost, "dash and stamina retained")
-    player._on_terrain_entered(main.get_node("SlowBush0"))
-    check(is_equal_approx(player.terrain_multiplier, 0.75), "terrain slowing retained")
+    player._on_terrain_entered(main.area_root.get_node("SlowBush0"))
+    check(is_equal_approx(player.terrain_multiplier, float(main.terrain_config.bush.movement_multiplier)), "terrain slowing retained")
     var bushes := get_nodes_in_group("slow_bushes")
     check(bushes.size() == 11, "individual bushes replace strips")
     var directions: Dictionary = {}
@@ -203,7 +203,7 @@ func run() -> void:
     await physics_frame
     await physics_frame
     await physics_frame
-    check(is_equal_approx(player.terrain_multiplier, 0.55), "pebble area slows to 55 percent")
+    check(is_equal_approx(player.terrain_multiplier, float(main.terrain_config.rocks.movement_multiplier)), "pebble area uses configured slowing")
     player.position = Vector2(390, 340)
     await physics_frame
     await physics_frame
@@ -217,7 +217,7 @@ func run() -> void:
     await physics_frame
     await physics_frame
     await physics_frame
-    check(is_equal_approx(player.terrain_multiplier, 0.75), "actual bush overlap slows player")
+    check(is_equal_approx(player.terrain_multiplier, float(main.terrain_config.bush.movement_multiplier)), "actual bush overlap slows player")
     player.position = Vector2(390, 340)
     await physics_frame
     await physics_frame

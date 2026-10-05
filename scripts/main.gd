@@ -9,8 +9,19 @@ const BUSH_TEXTURES := [
 ]
 
 const HUD_MARGIN := 18.0
-const BOTTOM_SIZE := Vector2(760.0, 48.0)
+const BOTTOM_SIZE := Vector2(430.0, 28.0)
 const VERSION_SIZE := Vector2(240.0, 26.0)
+
+var area_root: Node2D
+var areas: Dictionary = {}
+var current_area := "movement"
+var test_menu: TestMenu
+var toast_label: Label
+var toast_timer: Timer
+var diagnostics := false
+var footprints := false
+var notifications_ready := false
+var travel_armed := true
 
 var catalog: ItemCatalog
 var inventory: ItemInventory
@@ -40,12 +51,15 @@ func _ready() -> void:
         push_error("Main: required scene nodes are missing; initialization stopped.")
         return
 
+    process_mode = Node.PROCESS_MODE_ALWAYS
+    player.process_mode = Node.PROCESS_MODE_PAUSABLE
     config = GameConfig.load_data()
     terrain_config = config.get("terrain", {})
 
     catalog = ItemCatalog.new()
     inventory = ItemInventory.new(catalog, int(config.get("inventory", {}).get("player_slots", 16)))
     inventory_ui = InventoryUI.new()
+    inventory_ui.process_mode = Node.PROCESS_MODE_PAUSABLE
     add_child(inventory_ui)
     inventory_ui.bind(inventory)
     interaction_detector = InteractionDetector.new()
@@ -54,13 +68,14 @@ func _ready() -> void:
     interaction_detector.half_width = float(config.get("interaction", {}).get("half_width", 24))
     player.add_child(interaction_detector)
     inventory_ui.open_changed.connect(_on_inventory_open_changed)
-    _build_test_area()
-    _add_chest("TestChest", Vector2(391, 169), false)
-    _add_chest("LargeChest", Vector2(492, 169), true)
+    _create_area("movement")
+    _build_test_ui()
     _connect_player_signals()
 
-    controls_text.text = "WASD Walk | Shift Run | Left Alt Dash | F1 Infinite stamina | F2 Skin\nE Interact | I Inventory | Walk over fruit to collect | Esc Close"
-    version_text.text = "Interaction Sandbox  v%s" % str(config.get("balance_version", "0.0.0.6"))
+    controls_text.text = "WASD Move  ·  E Interact  ·  I Inventory  ·  Esc Menu"
+    bottom_controls.get_node("ControlsPanel").size = BOTTOM_SIZE
+    controls_text.size = BOTTOM_SIZE - Vector2(16, 8)
+    version_text.text = "Test Sandbox  v%s" % str(config.get("balance_version", "0.0.7"))
 
     _on_stamina_changed(player.stamina, player.max_stamina)
     _on_terrain_changed(player.current_terrain, player.terrain_multiplier)
@@ -72,6 +87,7 @@ func _ready() -> void:
     print("Main: player signals and viewport layout callback connected")
     _update_layout()
     queue_redraw()
+    notifications_ready = true
 
 func _find_scene_nodes() -> bool:
     player = get_node_or_null("Player") as DemoPlayer
@@ -149,7 +165,8 @@ func _update_layout() -> void:
 
 func _build_test_area() -> void:
     # Outer boundary walls.
-    _add_solid_rect(Rect2(0, 0, 960, 18), "Wall")
+    _add_solid_rect(Rect2(0, 0, 438, 18), "Wall")
+    _add_solid_rect(Rect2(522, 0, 438, 18), "Wall")
     _add_solid_rect(Rect2(0, 582, 960, 18), "Wall")
     _add_solid_rect(Rect2(0, 0, 18, 600), "Wall")
     _add_solid_rect(Rect2(942, 0, 18, 600), "Wall")
@@ -200,9 +217,19 @@ func _set_y_sort(node: Node2D, sort_y: float) -> void:
     node.z_index = roundi(to_global(Vector2(0, sort_y)).y)
 
 func _process(_delta: float) -> void:
-    for child in get_children():
+    if get_tree().paused:
+        return
+    for child in area_root.get_children():
         if child is Node2D and child.has_meta("sort_y"):
             child.z_index = roundi(to_global(Vector2(0, float(child.get_meta("sort_y")))).y)
+    if not inventory_ui.is_open:
+        if current_area == "movement" and player.position.y > 40 or current_area == "lab" and player.position.y < 550:
+            travel_armed = true
+        if travel_armed and player.position.x > 446 and player.position.x < 514:
+            if current_area == "movement" and player.position.y < 14:
+                switch_area("lab")
+            elif current_area == "lab" and player.position.y > 586:
+                switch_area("movement")
     if interaction_detector != null and not inventory_ui.is_open:
         var target := interaction_detector.closest_target()
         inventory_ui.prompt.text = "E: %s" % target.interaction_label if target != null else ""
@@ -230,7 +257,7 @@ func _add_chest(node_name: String, chest_position: Vector2, large: bool) -> void
     for id in ["apple_red", "orange", "pear", "cherry", "peach", "strawberry"]:
         chest.inventory.add_items(id, 8)
     chest.opened.connect(_open_chest.bind(chest))
-    add_child(chest)
+    area_root.add_child(chest)
 
 func _open_chest(inventory_data: ItemInventory, chest: TestChest) -> void:
     if is_instance_valid(active_chest) and active_chest != chest:
@@ -248,7 +275,7 @@ func _spawn_pickup(id: String, quantity: int, local_position: Vector2) -> void:
     pickup.position = local_position
     pickup.pickup_radius = float(config.get("pickups", {}).get("radius", 19))
     pickup.grace_left = float(config.get("pickups", {}).get("grace_seconds", 0.7))
-    add_child(pickup)
+    area_root.add_child(pickup)
 
 func _add_solid_rect(rect: Rect2, label_name: String) -> void:
     var body := StaticBody2D.new()
@@ -295,7 +322,7 @@ func _add_solid_rect(rect: Rect2, label_name: String) -> void:
     shadow.z_index = -3
     body.add_child(shadow)
 
-    add_child(body)
+    area_root.add_child(body)
 
 func _add_tree(tree_pos: Vector2) -> void:
     var body := FruitTree.new()
@@ -367,7 +394,7 @@ func _add_tree(tree_pos: Vector2) -> void:
     _add_canopy_blob(canopy, Vector2(8.0, -18.0), 17.0, Color("4b9a59"))
     _add_canopy_blob(canopy, Vector2(0.0, -8.0), 20.0, Color("3b8247"))
 
-    add_child(body)
+    area_root.add_child(body)
 
 func _add_canopy_blob(parent: Node, offset: Vector2, radius: float, color: Color) -> void:
     var blob := Polygon2D.new()
@@ -383,7 +410,7 @@ func _add_bush(pos: Vector2) -> void:
     bush.bush_texture = BUSH_TEXTURES[bush_count % BUSH_TEXTURES.size()]
     bush.settings = terrain_config.get("bush", {})
     bush_count += 1
-    add_child(bush)
+    area_root.add_child(bush)
 
 func _add_pebble_patch(rect: Rect2) -> void:
     var patch := PebblePatch.new()
@@ -392,7 +419,7 @@ func _add_pebble_patch(rect: Rect2) -> void:
     patch.patch_size = rect.size
     patch.settings = terrain_config.get("rocks", {})
     patch.z_index = 0
-    add_child(patch)
+    area_root.add_child(patch)
 
 func _add_fruit_garden() -> void:
     var garden: Array = config.get("plant_drops", {}).get("plants", [])
@@ -416,7 +443,7 @@ func _add_fruit_garden() -> void:
         var coordinates: Array = entry.get("position", [650, 120])
         plant.position = Vector2(float(coordinates[0]), float(coordinates[1]))
         plant.drop_requested.connect(_spawn_pickup)
-        add_child(plant)
+        area_root.add_child(plant)
 
 func _circle_polygon(radius: float, points: int) -> PackedVector2Array:
     var polygon := PackedVector2Array()
@@ -443,15 +470,25 @@ func _on_terrain_changed(terrain_name: String, multiplier: float) -> void:
 func _on_infinite_stamina_changed(enabled: bool) -> void:
     var state := "ON" if enabled else "OFF"
     debug_text.text = "Infinite stamina: %s" % state
+    if notifications_ready:
+        show_toast("Infinite Stamina " + state)
+        _sync_menu()
 
 func _on_movement_state_changed(state_name: String, speed: float) -> void:
     movement_text.text = "%s   |   Speed: %.1f" % [state_name, speed]
 
 func _on_skin_changed(index: int, total: int) -> void:
     skin_text.text = "Skin: %d / %d   (F2)" % [index + 1, total]
+    if notifications_ready:
+        show_toast("Skin %d / %d" % [index + 1, total])
+        _sync_menu()
 
 func _draw() -> void:
     draw_rect(Rect2(Vector2.ZERO, MAP_SIZE), Color("98b86f"), true)
+
+    if current_area == "lab":
+        return
+    _draw_zone_label(Vector2(370, 38), "↑ Systems lab · Scene 2")
 
     # Slightly stronger lighting bands to sell depth and keep the area readable.
     draw_rect(Rect2(0.0, 0.0, MAP_SIZE.x, 180.0), Color(1.0, 1.0, 1.0, 0.03), true)
@@ -463,11 +500,172 @@ func _draw() -> void:
     _draw_zone_label(Vector2(65, 55), "TREE COLLISION")
     _draw_zone_label(Vector2(330, 55), "CHEST STORAGE")
     _draw_zone_label(Vector2(625, 55), "FRUIT BUSHES / CACTUS")
-    _draw_zone_label(Vector2(90, 255), "BUSHES - 75% SPEED")
-    _draw_zone_label(Vector2(620, 255), "PEBBLES - 55% SPEED")
+    _draw_zone_label(Vector2(90, 255), "BUSHES - %d%% SPEED" % roundi(float(terrain_config.bush.movement_multiplier) * 100))
+    _draw_zone_label(Vector2(620, 255), "PEBBLES - %d%% SPEED" % roundi(float(terrain_config.rocks.movement_multiplier) * 100))
     _draw_zone_label(Vector2(70, 415), "MIXED OBSTACLE COURSE")
     draw_dashed_line(Vector2(370, 322), Vector2(590, 322), Color(1, 1, 1, 0.55), 2.0, 10.0)
 
 func _draw_zone_label(pos: Vector2, text: String) -> void:
     var font := ThemeDB.fallback_font
     draw_string(font, pos, text, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color(0.08, 0.12, 0.08, 0.82))
+
+
+func _create_area(id: String) -> void:
+    area_root = load("res://scenes/SystemsLab.tscn").instantiate() if id == "lab" else Node2D.new()
+    area_root.name = "SystemsLab" if id == "lab" else "MovementArea"
+    area_root.process_mode = Node.PROCESS_MODE_PAUSABLE
+    areas[id] = area_root
+    add_child(area_root)
+    if id == "movement":
+        fruit_tree_count = 0
+        bush_count = 0
+        _build_test_area()
+        _add_chest("TestChest", Vector2(391, 169), false)
+        _add_chest("LargeChest", Vector2(492, 169), true)
+    else:
+        _add_solid_rect(Rect2(0, 0, 960, 18), "Wall")
+        _add_solid_rect(Rect2(0, 582, 438, 18), "Wall")
+        _add_solid_rect(Rect2(522, 582, 438, 18), "Wall")
+        _add_solid_rect(Rect2(0, 0, 18, 600), "Wall")
+        _add_solid_rect(Rect2(942, 0, 18, 600), "Wall")
+        _add_solid_rect(Rect2(690, 350, 70, 20), "Obstacle")
+        _add_chest("IngredientChest", Vector2(110, 310), false)
+
+func switch_area(id: String) -> void:
+    if id not in ["movement", "lab"]:
+        return
+    if id == current_area:
+        show_toast("Already in " + ("Systems Lab" if id == "lab" else "Movement Sandbox"))
+        return
+    inventory_ui.close()
+    remove_child(area_root)
+    current_area = id
+    if areas.has(id):
+        area_root = areas[id]
+        add_child(area_root)
+    else:
+        _create_area(id)
+    _arrive()
+    test_menu.cancel_reset()
+    show_toast("Entered Systems Lab" if id == "lab" else "Entered Movement Sandbox")
+    queue_redraw()
+
+func _arrive() -> void:
+    player.position = Vector2(480, 540) if current_area == "lab" else Vector2(480, 48)
+    player.last_facing = Vector2.UP if current_area == "lab" else Vector2.DOWN
+    player.velocity = Vector2.ZERO
+    player.dash_time_left = 0
+    player.terrain_overlaps.clear()
+    player._recalculate_terrain()
+    travel_armed = false
+
+func _build_test_ui() -> void:
+    top_left_hud.get_node("HudPanel").size.y = 42
+    for label in [terrain_text, movement_text, debug_text, skin_text]:
+        label.hide()
+    toast_label = Label.new()
+    toast_label.position = Vector2(10, 44)
+    toast_label.add_theme_font_size_override("font_size", 13)
+    toast_label.add_theme_color_override("font_color", Color("fff1c0"))
+    toast_label.add_theme_color_override("font_shadow_color", Color("172417"))
+    toast_label.add_theme_constant_override("shadow_offset_x", 1)
+    toast_label.add_theme_constant_override("shadow_offset_y", 1)
+    toast_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+    top_left_hud.add_child(toast_label)
+    toast_timer = Timer.new()
+    toast_timer.one_shot = true
+    toast_timer.wait_time = 1.0
+    toast_timer.timeout.connect(func(): toast_label.text = "")
+    add_child(toast_timer)
+    inventory_ui.prompt.position = Vector2(18, 170)
+    test_menu = TestMenu.new()
+    add_child(test_menu)
+    test_menu.command_requested.connect(_debug_command)
+    test_menu.open_changed.connect(func(open: bool):
+        get_tree().paused = open
+        interaction_detector.blocked = open or inventory_ui.is_open)
+    var overlay := Node2D.new()
+    overlay.set_script(preload("res://scripts/test_footprints.gd"))
+    overlay.sandbox = self
+    overlay.z_index = 4090
+    add_child(overlay)
+    _sync_menu()
+
+func show_toast(text: String) -> void:
+    toast_label.text = text
+    toast_timer.start()
+
+func _sync_menu() -> void:
+    test_menu.sync(player, diagnostics, footprints)
+
+func _input(event: InputEvent) -> void:
+    if not event is InputEventKey or not event.pressed or event.echo:
+        return
+    if event.keycode == KEY_ESCAPE:
+        # Inventory gets first refusal: Esc closes it without opening this menu.
+        if inventory_ui.is_open:
+            inventory_ui.close()
+        else:
+            _sync_menu()
+            test_menu.set_open(not test_menu.is_open)
+        get_viewport().set_input_as_handled()
+    elif event.keycode in [KEY_F1, KEY_F2, KEY_F3, KEY_F4]:
+        var commands := {KEY_F1: "infinite", KEY_F2: "skin", KEY_F3: "diagnostics", KEY_F4: "footprints"}
+        _debug_command(commands[event.keycode])
+        get_viewport().set_input_as_handled()
+    elif test_menu.is_open and event.keycode in [KEY_I, KEY_E, KEY_ALT]:
+        get_viewport().set_input_as_handled()
+
+func _debug_command(command: String) -> void:
+    if command != "reset":
+        test_menu.cancel_reset()
+    match command:
+        "resume":
+            test_menu.set_open(false)
+        "infinite":
+            player.infinite_stamina = not player.infinite_stamina
+            if player.infinite_stamina:
+                _debug_command("refill")
+            player.infinite_stamina_changed.emit(player.infinite_stamina)
+        "skin":
+            player._apply_skin(player.current_skin + 1)
+        "diagnostics":
+            diagnostics = not diagnostics
+            for label in [terrain_text, movement_text, debug_text, skin_text]:
+                label.visible = diagnostics
+            top_left_hud.get_node("HudPanel").size.y = 134 if diagnostics else 42
+            toast_label.position.y = 136 if diagnostics else 44
+            show_toast("Diagnostics " + ("ON" if diagnostics else "OFF"))
+        "footprints":
+            footprints = not footprints
+            show_toast("Test Footprints " + ("ON" if footprints else "OFF"))
+        "refill":
+            player.stamina = player.max_stamina
+            player.regen_delay_left = 0
+            player.stamina_changed.emit(player.stamina, player.max_stamina)
+            show_toast("Stamina refilled")
+        "spawn":
+            _arrive()
+            show_toast("Returned to arrival point")
+        "movement", "lab":
+            switch_area(command)
+        "reset":
+            if not test_menu.confirm_reset:
+                test_menu.confirm_reset = true
+                test_menu.reset_button.text = "Confirm area reset"
+                test_menu.status.text = "Restore this area's chests, pickups and harvest state?"
+            else:
+                inventory_ui.close()
+                remove_child(area_root)
+                area_root.free()
+                _create_area(current_area)
+                _arrive()
+                test_menu.cancel_reset()
+                show_toast("Test area reset")
+    _sync_menu()
+
+func _exit_tree() -> void:
+    get_tree().paused = false
+    for area in areas.values():
+        if is_instance_valid(area) and area.get_parent() == null:
+            area.free()

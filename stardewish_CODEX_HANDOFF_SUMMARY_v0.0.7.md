@@ -1,12 +1,14 @@
+Current project version: **0.0.7**. The current UI/testing-area behavior is described in README.md; the older design and implementation notes below remain background history.
+
 # Conversation / Codex Handoff Summary
 
 ## Why this document exists
 
 The original ChatGPT conversation became long and increasingly awkward to continue. This document is intended to let development continue in Codex without needing the full chat history.
 
-**Current source-of-truth build:** `StarDewy` v0.0.0.6
+**Current source-of-truth build:** `StarDewy` v0.0.7
 
-The interaction/item/inventory slice is documented in README.md. Use E for interaction, I for player inventory, and drag/click-then-place to arrange stacks and double-click for chest transfers. The version-specific details below describe the earlier v0.0.0.5 movement handoff.
+The interaction/item/inventory slice is documented in README.md. Use E for interaction, I for player inventory, and drag/click-then-place to arrange stacks and double-click for chest transfers. The version-specific details below describe the earlier movement handoff.
 
 ## Project goal
 
@@ -108,7 +110,7 @@ The user chose:
 
 The user supplied `.kra` files in the project ZIP.
 
-v0.0.0.5 converts/organizes these into:
+v0.0.7 converts/organizes these into:
 - runtime PNG sheets under `assets/characters/villagers/`
 - original editable `.kra` files under `assets/source/characters/lexlom/`
 
@@ -253,7 +255,7 @@ Earlier versions were tested by the user.
 
 Notably:
 - v0.0.0.4 was reported to look good and be a clear improvement.
-- v0.0.0.5 added the Lexlom animated sprite/skin system.
+- v0.0.7 added the Lexlom animated sprite/skin system.
 
 Historical context: the environment that produced these builds did not have Godot available. That limitation applied only to that environment and does not restrict current Codex sessions. Follow [AGENTS.md](AGENTS.md) for the installed executable and required technical validation. Attempt Godot validation before reporting it unavailable; report actual failures and request execution permission if needed.
 
@@ -265,10 +267,10 @@ v0.0.0.2 claimed to add terrain textures and resizing, but the user's screenshot
 
 Do not assume every historical patch note means the feature worked correctly on the first attempt.
 
-## Historical suggested v0.0.0.5 Codex task
+## Historical suggested v0.0.7 Codex task
 
 Start with:
 
-> Run/inspect v0.0.0.5. Verify the 9-skin player system, directional walk animation, F2 switching, Y-sorting, collision at the feet, and HUD/window scaling. Fix any actual runtime issues without adding unrelated systems. After it is stable, tune walk/run animation feel and sprite offset.
+> Run/inspect v0.0.7. Verify the 9-skin player system, directional walk animation, F2 switching, Y-sorting, collision at the feet, and HUD/window scaling. Fix any actual runtime issues without adding unrelated systems. After it is stable, tune walk/run animation feel and sprite offset.
 
 The project should remain a small movement prototype until those fundamentals feel good.

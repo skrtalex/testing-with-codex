@@ -1,8 +1,16 @@
-# Stardew-ish Movement Sandbox â€” v0.0.0.5
+# Stardew-ish Movement Sandbox â€” v0.0.7
+
+## UI and testing areas — v0.0.7
+
+- The normal HUD shows stamina, a short control hint, and version. **Esc** opens a paused test menu with Debug, Keybinds, and Test areas tabs. When an inventory is open, Esc closes it first.
+- **F1** toggles infinite stamina, **F2** cycles skins, **F3** shows diagnostics, and **F4** overlays solid/terrain/player footprints and interaction reach. Keyboard and menu commands share behavior. A toast appears beneath stamina for one second; a newer command replaces it. Timers continue while the menu is open.
+- The menu also refills stamina, returns the player to the current arrival point, travels between areas, and resets the current area's world after confirmation. Player inventory and the other area's state survive reset.
+- Scene 1's top-center opening leads to Scene 2's bottom-center opening. Arrival points sit clear of triggers to prevent immediate return. Travel retains player inventory, skin, stamina/debug state and each area's chests, pickups and harvest state during the run. Inactive areas stop processing.
+- `scenes/SystemsLab.tscn` reserves cooking and combat zones. An ingredient chest works with the existing inventory; counters, stove and targets are floor markers. Cooking, attacks, enemies, damage and equipment are not implemented.
 
 A tiny Godot 4.x prototype focused on movement feel, stamina, terrain, 3/4 presentation, and a real animated player sprite.
 
-## v0.0.0.6: interaction and inventory
+## Interaction and inventory
 
 - Face a nearby tree or chest and press **E**. The closest eligible object in front is selected; walls block interaction.
 - Trees shake and scatter 1–3 fruit by default, with a 3-second cooldown. Each tree keeps its assigned fruit for the run.
@@ -21,8 +29,8 @@ A tiny Godot 4.x prototype focused on movement feel, stamina, terrain, 3/4 prese
 - Fixed stamina cost for dash
 - Stamina regeneration after a short delay
 - F1 toggles infinite stamina
-- Bush terrain slows movement to 75%
-- Rocky terrain slows movement to 55%
+- Bush terrain uses the configured multiplier (currently 90%)
+- Rocky terrain uses the configured multiplier (currently 75%)
 - Tree trunks and walls are impassable; tree canopies are walk-under
 - 3/4-style depth presentation and Y-based sorting
 - Animated player sprite using the supplied Lexlom character pack
@@ -79,17 +87,17 @@ Edit:
 
 The current defaults are:
 
-- Walk speed: 100
-- Run speed: 170
-- Dash speed: 340
+- Walk speed: 120
+- Run speed: 190
+- Dash speed: 350
 - Dash duration: 0.18 s
-- Dash cost: 25 stamina
+- Dash cost: 20 stamina
 - Dash cooldown: 0.35 s
-- Run cost: 15 stamina/s
+- Run cost: 13 stamina/s
 - Regen: 25 stamina/s
-- Regen delay: 0.75 s
-- Bush multiplier: 0.75
-- Rock multiplier: 0.55
+- Regen delay: 0.50 s
+- Bush multiplier: 0.90
+- Rock multiplier: 0.75
 - Walk animation: 6 FPS
 - Run animation: 10 FPS
 - Dash animation: 14 FPS
@@ -98,7 +106,7 @@ The current defaults are:
 
 `player.modifiers` and `progression.skills.athletics` are placeholders so future leveling can feed bonuses into movement/stamina without redesigning the data file. They are not active systems in this version.
 
-## v0.0.0.5
+## Earlier sprite work
 
 - Added animated character sprites from the supplied Lexlom `.kra` files.
 - Exported 9 runtime-compatible PNG skin sheets.
@@ -159,7 +167,7 @@ Rendered tests exercise double-click transfer both ways, dragging within the che
 
 Small chest: `box.png` when closed, `box-open.png` while its transfer UI is open. Large chest: `box-large.png` / `box-large-open.png`. Closing with I, E, Esc, or the Close button restores the closed sprite. Both have footprint collision and preserve independent contents during the run. The large chest's 64-slot grid scrolls vertically so slots stay readable on small windows; drag/drop, click-to-place, and double-click transfers work in both chests.
 
-Eleven individual walkable bushes replace the old bush-tile strips and procedural decorative bush. They cycle through all four `plant_bush_NE/NW/SE/SW.png` textures, with transparent export padding excluded using Sprite2D texture regions. The PNGs remain unchanged. Slowing applies only in each bush's small elliptical footprint near its base; gaps between bushes are normal terrain. Rock strips now use dense pebble sprite fields with one continuous 55%-speed footprint per patch.
+Eleven individual walkable bushes replace the old bush-tile strips and procedural decorative bush. They cycle through all four `plant_bush_NE/NW/SE/SW.png` textures, with transparent export padding excluded using Sprite2D texture regions. The PNGs remain unchanged. Slowing applies only in each bush's small elliptical footprint near its base; gaps between bushes are normal terrain. Rock strips now use dense pebble sprite fields with one continuous configured slowing footprint per patch.
 
 Tune `terrain.bush.display_width`, `slow_half_width`, `slow_half_height`, `slow_offset_y`, and `movement_multiplier` in `data/game_config.json`. `SlowBush` uses the existing terrain detector/overlap system, preserving slowest-overlap behavior and Y sorting from each bush's ground position. `ground/bush_tile.png` remains in the repository as an unused asset; runtime code no longer loads it.
 
@@ -183,3 +191,5 @@ assets/terrain/
 ```
 
 Import metadata moves with assets, with texture paths updated. The source library under `assets/source/` is unchanged. Original supplied PNG pixels are preserved. The storage doorway and central aisle stay clear; approach the small chest from the aisle to its right and the large chest from the aisle to its left.
+
+New area/UI regression checks: run `--headless --path $project --script res://tests/test_areas_test.gd`. Verify the passage, menu and footprint presentation manually after pulling.
