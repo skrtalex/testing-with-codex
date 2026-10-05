@@ -5,17 +5,17 @@
       "max_stamina": 100.0
     },
     "movement": {
-      "walk_speed": 100.0,
-      "run_speed": 170.0,
-      "dash_speed": 340.0,
+      "walk_speed": 120.0,
+      "run_speed": 190.0,
+      "dash_speed": 350.0,
       "dash_duration": 0.18,
-      "dash_cost": 25.0,
+      "dash_cost": 20.0,
       "dash_cooldown": 0.35
     },
     "stamina": {
-      "run_cost_per_second": 15.0,
+      "run_cost_per_second": 13.0,
       "regen_per_second": 25.0,
-      "regen_delay": 0.75
+      "regen_delay": 0.50
     },
     "modifiers": {
       "flat": {},
@@ -34,7 +34,7 @@
       "movement_multiplier": 1.0
     },
     "bush": {
-      "movement_multiplier": 0.75,
+      "movement_multiplier": 0.90,
       "display_width": 34,
       "slow_half_width": 17,
       "slow_half_height": 10,
@@ -42,7 +42,7 @@
       "harvest_plant_radius": 15
     },
     "rocks": {
-      "movement_multiplier": 0.55,
+      "movement_multiplier": 0.75,
       "pebble_width": 26,
       "spacing": 21,
       "jitter": 2,
